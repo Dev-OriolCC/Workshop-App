@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Component } from "@/components/kanban";
 
 type NavContext = {
     setNavConfig: React.Dispatch<
@@ -180,7 +179,6 @@ export default function RepairOrders() {
             )
             }
             <p className="text-muted-foreground">Repair Orders content will go here.</p>
-            <Component/>
             <Outlet />
         </div >
     );
