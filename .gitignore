@@ -22,3 +22,75 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+##### server/demo ###########
+
+
+server/demo/HELP.md
+server/demo/target/
+server/demo/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+server/demo/.apt_generated
+server/demo/.classpath
+server/demo/.factorypath
+server/demo/.project
+server/demo/.settings
+server/demo/.springBeans
+server/demo/.sts4-cache
+
+### IntelliJ IDEA ###
+server/demo/.idea
+server/demo/*.iws
+server/demo/*.iml
+server/demo/*.ipr
+
+### NetBeans ###
+server/demo/nbproject/private/
+server/demo/nbbuild/
+server/demo/dist/
+server/demo/nbdist/
+server/demo/.nb-gradle/
+server/demo/build/
+server/demo/!**/src/main/**/build/
+server/demo/!**/src/test/**/build/
+
+### VS Code ###
+server/demo/.vscode/
