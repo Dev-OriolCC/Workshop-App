@@ -32,7 +32,8 @@ public class RepairOrderEntity {
     private UserEntity createdBy;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('pending','in_progress','ready','completed')")
+    //@Column(nullable = false, columnDefinition = "ENUM('pending','in_progress','ready','completed')")
+    @Column(nullable = false, length = 20)
     private RepairOrderStatus status = RepairOrderStatus.PENDING;
 
     @Column(columnDefinition = "TEXT")
