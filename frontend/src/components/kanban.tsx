@@ -1,18 +1,20 @@
 "use client";
 
-import React, {
-  Dispatch,
-  SetStateAction,
-  useState,
-  DragEvent,
-  FormEvent,
-} from "react";
-import { Plus, Trash2, Flame, Handshake } from "lucide-react";
+import React, { useState } from "react";
+import type { Dispatch, DragEvent, SetStateAction } from "react";
+import {
+  CalendarDays,
+  GripVertical,
+  Handshake,
+  Trash2,
+  UserRound,
+  Wrench,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 export const Component = () => {
   return (
-    <div className="h-screen w-full">
+    <div className="min-h-[calc(100svh-8rem)] w-full overflow-hidden rounded-lg border border-border bg-slate-50">
       <Board />
     </div>
   );
@@ -22,26 +24,28 @@ const Board = () => {
   const [cards, setCards] = useState(DEFAULT_CARDS);
 
   return (
-    <div className="flex h-full w-full gap-3 overflow-scroll p-12 ">
-      
+    <div className="flex h-full w-full gap-4 overflow-x-auto overflow-y-hidden p-4 md:p-6">
       <Column
-        title="TODO"
+        title="New Orders"
         column="todo"
-        headingColor="text-black"
+        headingColor="text-sky-700"
+        accentColor="bg-sky-500"
         cards={cards}
         setCards={setCards}
       />
       <Column
-        title="In progress"
+        title="In Repair"
         column="doing"
-        headingColor="text-black"
+        headingColor="text-amber-700"
+        accentColor="bg-amber-500"
         cards={cards}
         setCards={setCards}
       />
       <Column
-        title="Complete"
+        title="Ready"
         column="done"
-        headingColor="text-black"
+        headingColor="text-emerald-700"
+        accentColor="bg-emerald-500"
         cards={cards}
         setCards={setCards}
       />
@@ -53,6 +57,7 @@ const Board = () => {
 type ColumnProps = {
   title: string;
   headingColor: string;
+  accentColor: string;
   cards: CardType[];
   column: ColumnType;
   setCards: Dispatch<SetStateAction<CardType[]>>;
@@ -61,6 +66,7 @@ type ColumnProps = {
 const Column = ({
   title,
   headingColor,
+  accentColor,
   cards,
   column,
   setCards,
@@ -171,10 +177,13 @@ const Column = ({
   const filteredCards = cards.filter((c) => c.column === column);
 
   return (
-    <div className="w-56 shrink-0">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className={`font-semibold ${headingColor}`}>{title}</h3>
-        <span className="rounded text-sm text-neutral-400">
+    <div className="flex min-h-[34rem] w-[18rem] shrink-0 flex-col rounded-lg border border-white/70 bg-white/75 shadow-sm shadow-slate-200/80 backdrop-blur">
+      <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <span className={`size-2.5 rounded-full ${accentColor}`} />
+          <h3 className={`text-sm font-semibold ${headingColor}`}>{title}</h3>
+        </div>
+        <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-500 shadow-sm">
           {filteredCards.length}
         </span>
       </div>
@@ -182,8 +191,8 @@ const Column = ({
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-full w-full transition-colors ${
-          active ? "bg-neutral-800/20" : "bg-neutral-800/0"
+        className={`flex-1 rounded-b-lg p-3 transition-colors ${
+          active ? "bg-slate-200/70" : "bg-transparent"
         }`}
       >
         {filteredCards.map((c) => {
@@ -199,22 +208,97 @@ type CardProps = CardType & {
   handleDragStart: (e: DragEvent, card: CardType) => void;
 };
 
-const Card = ({ title, id, column, handleDragStart }: CardProps) => {
+const Card = ({
+  title,
+  id,
+  column,
+  client,
+  service,
+  ticket,
+  dueDate,
+  priority,
+  progress,
+  handleDragStart,
+}: CardProps) => {
+  const priorityStyles: Record<CardPriority, string> = {
+    Low: "bg-slate-100 text-slate-600",
+    Medium: "bg-sky-100 text-sky-700",
+    High: "bg-amber-100 text-amber-700",
+    Urgent: "bg-rose-100 text-rose-700",
+  };
+
   return (
     <>
       <DropIndicator beforeId={id} column={column} />
       <motion.div
         layout
         layoutId={id}
-        className="cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 active:cursor-grabbing"
+        className="group cursor-grab rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md active:cursor-grabbing"
       >
         <div
           draggable="true"
           onDragStart={(e: React.DragEvent<HTMLDivElement>) =>
-            handleDragStart(e, { title, id, column })
+            handleDragStart(e, {
+              title,
+              id,
+              column,
+              client,
+              service,
+              ticket,
+              dueDate,
+              priority,
+              progress,
+            })
           }
+          className="space-y-3"
         >
-          <p className="text-sm text-neutral-100">{title}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {ticket}
+              </p>
+              <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+                {title}
+              </p>
+            </div>
+            <GripVertical className="mt-1 size-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-500" />
+          </div>
+
+          <div className="space-y-2 text-xs text-slate-500">
+            <div className="flex items-center gap-2">
+              <UserRound className="size-3.5 text-slate-400" />
+              <span className="truncate">{client}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Wrench className="size-3.5 text-slate-400" />
+              <span className="truncate">{service}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CalendarDays className="size-3.5 text-slate-400" />
+              <span>{dueDate}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-emerald-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-slate-500">
+                {progress}% complete
+              </span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                  priorityStyles[priority]
+                }`}
+              >
+                {priority}
+              </span>
+            </div>
+          </div>
         </div>
       </motion.div>
     </>
@@ -231,7 +315,7 @@ const DropIndicator = ({ beforeId, column }: DropIndicatorProps) => {
     <div
       data-before={beforeId || "-1"}
       data-column={column}
-      className="my-0.5 h-0.5 w-full bg-blue-400 opacity-0"
+      className="my-1 h-1 w-full rounded-full bg-sky-400 opacity-0 transition-opacity"
     />
   );
 };
@@ -265,10 +349,10 @@ const BurnBarrel = ({
       onDrop={handleDragEnd}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      className={`mt-10 grid h-56 w-56 shrink-0 place-content-center rounded border text-3xl ${
+      className={`mt-14 grid h-28 w-28 shrink-0 place-content-center rounded-lg border text-3xl shadow-sm transition-colors ${
         active
-          ? "border-green-800 bg-green-800/20 text-green-500"
-          : "border-neutral-500 bg-neutral-500/20 text-neutral-500"
+          ? "border-emerald-300 bg-emerald-50 text-emerald-600"
+          : "border-slate-200 bg-white/70 text-slate-400"
       }`}
     >
       {active ? (
@@ -280,38 +364,98 @@ const BurnBarrel = ({
   );
 };
 
-
 type ColumnType = "todo" | "doing" | "done";
+type CardPriority = "Low" | "Medium" | "High" | "Urgent";
 
 type CardType = {
   title: string;
   id: string;
   column: ColumnType;
+  client: string;
+  service: string;
+  ticket: string;
+  dueDate: string;
+  priority: CardPriority;
+  progress: number;
 };
 
 const DEFAULT_CARDS: CardType[] = [
-  
-  // TODO
   {
-    title: "Research DB options for new microservice",
-    id: "5",
+    title: "Shimano Stradic 4000 reel tune-up",
+    id: "1",
     column: "todo",
+    client: "Jorge Cortes",
+    service: "Reel maintenance",
+    ticket: "RO-1048",
+    dueDate: "May 18",
+    priority: "Medium",
+    progress: 15,
   },
-  { title: "Postmortem for outage", id: "6", column: "todo" },
-  { title: "Sync with product on Q3 roadmap", id: "7", column: "todo" },
-
-  // DOING
   {
-    title: "Refactor context providers to use Zustand",
-    id: "8",
+    title: "Penn Battle III drag inspection",
+    id: "2",
+    column: "todo",
+    client: "Marta Ruiz",
+    service: "Repair reel",
+    ticket: "RO-1051",
+    dueDate: "May 19",
+    priority: "High",
+    progress: 10,
+  },
+  {
+    title: "St. Croix rod tip replacement",
+    id: "3",
+    column: "todo",
+    client: "Luis Herrera",
+    service: "Repair rod",
+    ticket: "RO-1053",
+    dueDate: "May 20",
+    priority: "Low",
+    progress: 5,
+  },
+  {
+    title: "Daiwa BG 3000 bearing replacement",
+    id: "4",
     column: "doing",
+    client: "Ana Medina",
+    service: "Repair reel",
+    ticket: "RO-1042",
+    dueDate: "May 16",
+    priority: "Urgent",
+    progress: 55,
   },
-  { title: "Add logging to daily CRON", id: "9", column: "doing" },
-  // DONE
   {
-    title: "Set up DD dashboards for Lambda listener",
-    id: "10",
+    title: "Abu Garcia handle assembly service",
+    id: "5",
+    column: "doing",
+    client: "Carlos Vega",
+    service: "Maintenance",
+    ticket: "RO-1045",
+    dueDate: "May 17",
+    priority: "Medium",
+    progress: 70,
+  },
+  {
+    title: "Okuma reel cleaning and lubrication",
+    id: "6",
     column: "done",
+    client: "Sofia Marin",
+    service: "Maintenance",
+    ticket: "RO-1038",
+    dueDate: "May 14",
+    priority: "Low",
+    progress: 100,
+  },
+  {
+    title: "Ugly Stik guide wrap repair",
+    id: "7",
+    column: "done",
+    client: "Diego Poot",
+    service: "Repair rod",
+    ticket: "RO-1039",
+    dueDate: "May 15",
+    priority: "Medium",
+    progress: 100,
   },
 ];
 

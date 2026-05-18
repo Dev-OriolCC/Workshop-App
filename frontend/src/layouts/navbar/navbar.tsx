@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavigationSheet } from "@/components/navigation-sheet";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { SquarePlusIcon } from "lucide-react";
 
 type NavbarProps = {
@@ -12,6 +12,8 @@ type NavbarProps = {
 };
 
 export default function NavBar({ title, showOrdersTabs, showModal, setShowModal }: NavbarProps) {
+    const { pathname } = useLocation();
+    const isOrdersBoardActive = pathname === "/repair-orders" || pathname === "/repair-orders/board";
 
 
     return (
@@ -25,10 +27,32 @@ export default function NavBar({ title, showOrdersTabs, showModal, setShowModal 
 
                 <div className="flex items-center gap-3">
                     {showOrdersTabs && (
-                        <>
-                            <NavLink to="/repair-orders/board" className={({ isActive }) => isActive ? " active " : " text-muted "}>Orders Board</NavLink>
-                            <NavLink to="/repair-orders/history" className={({ isActive }) => isActive ? " active " : " text-muted "}>History</NavLink>
-                        </>
+                        <div className="flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1 shadow-sm">
+                            <NavLink
+                                to="/repair-orders"
+                                className={() =>
+                                    `rounded-full px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                                        isOrdersBoardActive
+                                            ? "border border-border bg-background text-foreground shadow-sm"
+                                            : "text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                                    }`
+                                }
+                            >
+                                Orders Board
+                            </NavLink>
+                            <NavLink
+                                to="/repair-orders/history"
+                                className={({ isActive }) =>
+                                    `rounded-full px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                                        isActive
+                                            ? "border border-border bg-background text-foreground shadow-sm"
+                                            : "text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                                    }`
+                                }
+                            >
+                                History
+                            </NavLink>
+                        </div>
                     )}
                 </div>
 

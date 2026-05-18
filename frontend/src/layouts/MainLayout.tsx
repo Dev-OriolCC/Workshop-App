@@ -1,18 +1,10 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import NavBar from "./navbar/navbar";
 import { useState } from "react";
 
-const pageTitles: Record<string, string> = {
-    "/": "Home",
-    "/repair-orders": "Repair Orders",
-    "/installments": "Installments",
-};
-
 export default function MainLayout() {
-    const { pathname } = useLocation();
-    //const title = pageTitles[pathname] ?? "Workshop App";
     const [navConfig, setNavConfig] = useState({
         title: "",
         showOrdersTabs: false,

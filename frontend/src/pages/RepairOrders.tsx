@@ -1,6 +1,6 @@
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, } from "@/components/ui/field"
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
@@ -54,7 +54,7 @@ export default function RepairOrders() {
         <div>
             {showModal && (
                 <>
-                    <Dialog open={showModal} onClose={() => setShowModal(true)} className="relative z-10">
+                    <Dialog open={showModal} onClose={() => setShowModal(false)} className="relative z-10">
                         <DialogBackdrop
                             transition
                             className="fixed inset-0 bg-gray-700/50 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -178,7 +178,6 @@ export default function RepairOrders() {
                 </>
             )
             }
-            <p className="text-muted-foreground">Repair Orders content will go here.</p>
             <Outlet />
         </div >
     );
