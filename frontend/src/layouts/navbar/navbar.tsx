@@ -28,7 +28,7 @@ export default function NavBar({ title, showOrdersTabs, section, showModal, setS
 
     const handleSectionAction = () => {
         if (showInstallmentsNav) {
-            console.log("Create Installment clicked");
+            setShowModal(!showModal);
             return;
         }
 
