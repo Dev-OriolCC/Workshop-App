@@ -6,12 +6,14 @@ import type {
     ServiceSummary,
     UserSummary,
 } from "@/types/repair-orders";
+import type { NavSection } from "@/layouts/MainLayout";
 
 type NavContext = {
     setNavConfig: React.Dispatch<
         React.SetStateAction<{
             title: string;
             showOrdersTabs: boolean;
+            section: NavSection;
         }>
     >;
     showModal: boolean;
@@ -67,6 +69,7 @@ export default function RepairOrders() {
         setNavConfig({
             title: "Repair Orders",
             showOrdersTabs: true,
+            section: "repair-orders",
         });
     }, [setNavConfig]);
 

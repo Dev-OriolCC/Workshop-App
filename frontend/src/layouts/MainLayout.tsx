@@ -4,10 +4,13 @@ import { Outlet } from "react-router-dom";
 import NavBar from "./navbar/navbar";
 import { useState } from "react";
 
+export type NavSection = "none" | "repair-orders" | "installments";
+
 export default function MainLayout() {
     const [navConfig, setNavConfig] = useState({
         title: "",
         showOrdersTabs: false,
+        section: "none" as NavSection,
     });
 
     const [showModal, setShowModal] = useState(false);
