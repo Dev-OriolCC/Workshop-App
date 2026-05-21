@@ -1,6 +1,6 @@
 import { CreateInstallmentModal } from "@/components/installments/CreateInstallmentModal";
 import { useEffect } from "react";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useLocation, useOutletContext } from "react-router-dom";
 import type { NavSection } from "@/layouts/MainLayout";
 import type { InstallmentDraftPayload, UserSummary } from "@/types/installments";
 
@@ -25,6 +25,8 @@ const currentUser: UserSummary = {
 
 export default function Installments() {
     const { setNavConfig, showModal, setShowModal } = useOutletContext<NavContext>();
+    const { pathname } = useLocation();
+    const isEditRoute = pathname.startsWith("/installments/edit/");
 
     const handleCreateInstallment = (payload: InstallmentDraftPayload) => {
         console.log("Installment Created:", payload);
@@ -32,11 +34,11 @@ export default function Installments() {
 
     useEffect(() => {
         setNavConfig({
-            title: "Installments",
+            title: isEditRoute ? "Edit Installment" : "Installments",
             showOrdersTabs: false,
-            section: "installments",
+            section: isEditRoute ? "none" : "installments",
         });
-    }, [setNavConfig]);
+    }, [isEditRoute, setNavConfig]);
 
     return (
         <div>

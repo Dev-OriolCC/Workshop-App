@@ -7,6 +7,7 @@ import OrdersBoard from "@/pages/repair-orders/orders-board";
 import OrdersHistory from "@/pages/repair-orders/orders-history";
 import InstallmentsBoard from "@/pages/installments/installments-board";
 import InstallmentsHistory from "@/pages/installments/installments-history";
+import InstallmentsEdit from "@/pages/installments/installments-edit";
 
 export default function AppRoutes() {
     return (
@@ -23,6 +24,7 @@ export default function AppRoutes() {
                         <Route index element={<InstallmentsBoard />} />
                         <Route path="board" element={<InstallmentsBoard />} />
                         <Route path="history" element={<InstallmentsHistory />} />
+                        <Route path="edit/:installmentId" element={<InstallmentsEdit />} />
                     </Route>
                 </Route>
             </Routes>
