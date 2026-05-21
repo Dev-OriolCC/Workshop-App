@@ -2,6 +2,8 @@ export type InstallmentStatus = "ACTIVE" | "COMPLETED" | "DEFAULTED";
 
 export type PaymentMethod = "CASH" | "TRANSFER" | "CARD";
 
+export type InstallmentModalMode = "create" | "view" | "edit";
+
 export type ClientDraft = {
     name: string;
     alias: string;

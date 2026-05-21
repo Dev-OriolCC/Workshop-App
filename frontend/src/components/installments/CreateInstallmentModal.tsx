@@ -24,6 +24,7 @@ import type { FormEvent, ReactNode } from "react";
 import type {
     ClientDraft,
     InstallmentDraftPayload,
+    InstallmentModalMode,
     InstallmentPaymentDraft,
     InstallmentStatus,
     PaymentMethod,
@@ -35,6 +36,10 @@ type CreateInstallmentModalProps = {
     onOpenChange: (open: boolean) => void;
     onSubmit: (payload: InstallmentDraftPayload) => void;
     currentUser: UserSummary;
+    mode?: InstallmentModalMode;
+    initialValue?: InstallmentDraftPayload | null;
+    onUpdate?: (payload: InstallmentDraftPayload) => void;
+    onModeChange?: (mode: InstallmentModalMode) => void;
 };
 
 type PaymentForm = {
@@ -70,6 +75,10 @@ export function CreateInstallmentModal({
     onOpenChange,
     onSubmit,
     currentUser,
+    mode = "create",
+    initialValue,
+    onUpdate,
+    onModeChange,
 }: CreateInstallmentModalProps) {
     const [client, setClient] = useState<ClientDraft>(emptyClient);
     const [article, setArticle] = useState("");
@@ -86,9 +95,13 @@ export function CreateInstallmentModal({
     );
     const pendingAmount = Math.max(totalAmount - amountPaid, 0);
     const progress = totalAmount > 0 ? Math.min(100, Math.round((amountPaid / totalAmount) * 100)) : 0;
+    const isViewMode = mode === "view";
+    const isEditMode = mode === "edit";
+    const isReadOnly = isViewMode;
+    const creator = initialValue?.createdBy ?? currentUser;
 
     const resetForm = () => {
-        setClient(emptyClient);
+        setClient({ ...emptyClient });
         setArticle("");
         setComment("");
         setInterestRate(0);
@@ -98,11 +111,27 @@ export function CreateInstallmentModal({
         setError("");
     };
 
+    const hydrateForm = (value: InstallmentDraftPayload) => {
+        setClient({ ...value.client });
+        setArticle(value.article);
+        setComment(value.comment);
+        setInterestRate(value.interestRate);
+        setTotalAmount(value.totalAmount);
+        setStatus(value.status);
+        setPayments(value.payments.map((payment) => ({ ...payment })));
+        setError("");
+    };
+
     useEffect(() => {
-        if (open) {
+        if (!open) return;
+
+        if (mode === "create" || !initialValue) {
             resetForm();
+            return;
         }
-    }, [open]);
+
+        hydrateForm(initialValue);
+    }, [open, mode, initialValue]);
 
     const updateClient = (field: keyof ClientDraft, value: string) => {
         setClient((current) => ({ ...current, [field]: value }));
@@ -136,8 +165,34 @@ export function CreateInstallmentModal({
         return "";
     };
 
+    const buildPayload = (): InstallmentDraftPayload => ({
+        client: {
+            name: client.name.trim(),
+            alias: client.alias.trim(),
+            phone: client.phone.trim(),
+            email: client.email.trim(),
+            comment: client.comment.trim(),
+        },
+        createdBy: creator,
+        article: article.trim(),
+        comment: comment.trim(),
+        interestRate,
+        totalAmount,
+        amountPaid,
+        pendingAmount,
+        status,
+        payments: payments.map((payment): InstallmentPaymentDraft => ({
+            id: payment.id,
+            amount: payment.amount,
+            paymentMethod: payment.paymentMethod,
+            note: payment.note.trim(),
+        })),
+    });
+
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if (isViewMode) return;
 
         const validationError = validate();
         if (validationError) {
@@ -145,32 +200,26 @@ export function CreateInstallmentModal({
             return;
         }
 
-        const payload: InstallmentDraftPayload = {
-            client: {
-                name: client.name.trim(),
-                alias: client.alias.trim(),
-                phone: client.phone.trim(),
-                email: client.email.trim(),
-                comment: client.comment.trim(),
-            },
-            createdBy: currentUser,
-            article: article.trim(),
-            comment: comment.trim(),
-            interestRate,
-            totalAmount,
-            amountPaid,
-            pendingAmount,
-            status,
-            payments: payments.map((payment): InstallmentPaymentDraft => ({
-                id: payment.id,
-                amount: payment.amount,
-                paymentMethod: payment.paymentMethod,
-                note: payment.note.trim(),
-            })),
-        };
+        const payload = buildPayload();
+
+        if (isEditMode) {
+            onUpdate?.(payload);
+            onModeChange?.("view");
+            return;
+        }
 
         onSubmit(payload);
         resetForm();
+        onOpenChange(false);
+    };
+
+    const handleCancel = () => {
+        if (isEditMode) {
+            if (initialValue) hydrateForm(initialValue);
+            onModeChange?.("view");
+            return;
+        }
+
         onOpenChange(false);
     };
 
@@ -191,16 +240,17 @@ export function CreateInstallmentModal({
                             <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
                                 <div>
                                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                                        New financing ticket
+                                        {mode === "create" ? "New financing ticket" : "Installment record"}
                                     </p>
                                     <h2 className="mt-1 text-xl font-semibold text-slate-950">
-                                        Create Installment
+                                        {mode === "create" ? "Create Installment" : "Installment Details"}
                                     </h2>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <Select
                                         value={status}
                                         onValueChange={(value) => setStatus(value as InstallmentStatus)}
+                                        disabled={isReadOnly}
                                     >
                                         <SelectTrigger className="h-9 w-[145px] rounded-lg border-slate-200 bg-slate-50 text-xs font-semibold">
                                             <SelectValue />
@@ -217,7 +267,7 @@ export function CreateInstallmentModal({
                                         <UserRound className="size-4 text-slate-400" />
                                         <span>Creator</span>
                                         <span className="font-semibold text-slate-900">
-                                            {currentUser.name}
+                                            {creator.name}
                                         </span>
                                     </div>
                                     <Button
@@ -249,6 +299,7 @@ export function CreateInstallmentModal({
                                                     onChange={(event) => updateClient("name", event.target.value)}
                                                     placeholder="Marta Ruiz"
                                                     required
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                             <FormField label="Alias" htmlFor="installment-client-alias">
@@ -257,6 +308,7 @@ export function CreateInstallmentModal({
                                                     value={client.alias}
                                                     onChange={(event) => updateClient("alias", event.target.value)}
                                                     placeholder="Marta R."
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                             <FormField label="Phone" htmlFor="installment-client-phone">
@@ -265,6 +317,7 @@ export function CreateInstallmentModal({
                                                     value={client.phone}
                                                     onChange={(event) => updateClient("phone", event.target.value)}
                                                     placeholder="9831808283"
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                             <FormField label="Email" htmlFor="installment-client-email">
@@ -274,6 +327,7 @@ export function CreateInstallmentModal({
                                                     value={client.email}
                                                     onChange={(event) => updateClient("email", event.target.value)}
                                                     placeholder="client@example.com"
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                         </div>
@@ -287,6 +341,7 @@ export function CreateInstallmentModal({
                                                 value={client.comment}
                                                 onChange={(event) => updateClient("comment", event.target.value)}
                                                 placeholder="Contact preferences or billing notes"
+                                                disabled={isReadOnly}
                                             />
                                         </FormField>
                                     </section>
@@ -306,6 +361,7 @@ export function CreateInstallmentModal({
                                                     onChange={(event) => setArticle(event.target.value)}
                                                     placeholder="Shimano Stella FK Reel"
                                                     required
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                             <FormField label="Interest rate" htmlFor="installment-interest">
@@ -316,6 +372,7 @@ export function CreateInstallmentModal({
                                                     step="0.01"
                                                     value={interestRate}
                                                     onChange={(event) => setInterestRate(Number(event.target.value))}
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                             <FormField label="Total amount" htmlFor="installment-total" required>
@@ -327,6 +384,7 @@ export function CreateInstallmentModal({
                                                     value={totalAmount}
                                                     onChange={(event) => setTotalAmount(Number(event.target.value))}
                                                     required
+                                                    disabled={isReadOnly}
                                                 />
                                             </FormField>
                                         </div>
@@ -337,6 +395,7 @@ export function CreateInstallmentModal({
                                                 onChange={(event) => setComment(event.target.value)}
                                                 placeholder="Payment agreement, due dates, or special conditions"
                                                 className="min-h-28"
+                                                disabled={isReadOnly}
                                             />
                                         </FormField>
                                     </section>
@@ -355,6 +414,7 @@ export function CreateInstallmentModal({
                                                 size="sm"
                                                 className="gap-2 rounded-full"
                                                 onClick={() => setPayments((current) => [...current, createPayment()])}
+                                                disabled={isReadOnly}
                                             >
                                                 <Plus className="size-4" />
                                                 Add payment
@@ -383,6 +443,7 @@ export function CreateInstallmentModal({
                                                                         current.filter((currentPayment) => currentPayment.id !== payment.id)
                                                                     )
                                                                 }
+                                                                disabled={isReadOnly}
                                                             >
                                                                 <Trash2 className="size-4" />
                                                             </Button>
@@ -399,6 +460,7 @@ export function CreateInstallmentModal({
                                                                         updatePayment(payment.id, "amount", event.target.value)
                                                                     }
                                                                     className="bg-white"
+                                                                    disabled={isReadOnly}
                                                                 />
                                                             </FormField>
                                                             <FormField label="Method" htmlFor={`installment-payment-method-${payment.id}`}>
@@ -411,6 +473,7 @@ export function CreateInstallmentModal({
                                                                             value as PaymentMethod
                                                                         )
                                                                     }
+                                                                    disabled={isReadOnly}
                                                                 >
                                                                     <SelectTrigger
                                                                         id={`installment-payment-method-${payment.id}`}
@@ -436,6 +499,7 @@ export function CreateInstallmentModal({
                                                                     }
                                                                     placeholder="Receipt or reference"
                                                                     className="bg-white"
+                                                                    disabled={isReadOnly}
                                                                 />
                                                             </FormField>
                                                         </div>
@@ -479,7 +543,7 @@ export function CreateInstallmentModal({
                                             <div className="flex items-center gap-2 text-sm text-slate-600">
                                                 <UserRound className="size-4 text-slate-400" />
                                                 <span>Creator</span>
-                                                <span className="font-semibold text-slate-950">{currentUser.name}</span>
+                                                <span className="font-semibold text-slate-950">{creator.name}</span>
                                             </div>
                                         </section>
                                     </div>
@@ -493,12 +557,29 @@ export function CreateInstallmentModal({
                             )}
 
                             <footer className="flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-5 py-4 sm:flex-row sm:justify-end">
-                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                    Cancel
-                                </Button>
-                                <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
-                                    Create Installment
-                                </Button>
+                                {isViewMode ? (
+                                    <>
+                                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                            Close
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            className="bg-violet-600 hover:bg-violet-700"
+                                            onClick={() => onModeChange?.("edit")}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button type="button" variant="outline" onClick={handleCancel}>
+                                            Cancel
+                                        </Button>
+                                        <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
+                                            {isEditMode ? "Update Installment" : "Create Installment"}
+                                        </Button>
+                                    </>
+                                )}
                             </footer>
                         </form>
                     </DialogPanel>
