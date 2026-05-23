@@ -102,6 +102,7 @@ export default function InstallmentsBoard() {
             state: {
                 installment: toInstallmentDraftPayload(selectedInstallment),
                 installmentId: selectedInstallment.id,
+                installmentCreatedAt: selectedInstallment.createdAt,
             },
         });
     };
@@ -144,6 +145,7 @@ export default function InstallmentsBoard() {
                 onModeChange={setModalMode}
                 onEdit={handleEditInstallment}
                 initialValue={selectedInstallment ? toInstallmentDraftPayload(selectedInstallment) : null}
+                installmentCreatedAt={selectedInstallment?.createdAt}
             />
         </section>
     );

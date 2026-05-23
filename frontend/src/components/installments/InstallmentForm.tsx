@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/installments/DatePicker";
+import { InternationalPhoneInput } from "@/components/installments/InternationalPhoneInput";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -34,6 +36,7 @@ type PaymentForm = {
     amount: number;
     paymentMethod: PaymentMethod;
     note: string;
+    createdAt: string;
 };
 
 type InstallmentFormProps = {
@@ -49,6 +52,7 @@ type InstallmentFormProps = {
     onClose?: () => void;
     onEdit?: () => void;
     showCloseButton?: boolean;
+    installmentCreatedAt?: string;
     className?: string;
 };
 
@@ -60,11 +64,20 @@ const emptyClient: ClientDraft = {
     comment: "",
 };
 
+const toDateInputValue = (value: string | Date) => {
+    const date = typeof value === "string" ? new Date(value) : value;
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toISOString().slice(0, 10);
+};
+
+const todayDateInputValue = () => toDateInputValue(new Date());
+
 const createPayment = (): PaymentForm => ({
     id: `PAY-${crypto.randomUUID()}`,
     amount: 0,
     paymentMethod: "CASH",
     note: "",
+    createdAt: todayDateInputValue(),
 });
 
 const formatCurrency = (value: number) =>
@@ -86,6 +99,7 @@ export function InstallmentForm({
     onClose,
     onEdit,
     showCloseButton = false,
+    installmentCreatedAt,
     className,
 }: InstallmentFormProps) {
     const [client, setClient] = useState<ClientDraft>({ ...emptyClient });
@@ -105,6 +119,7 @@ export function InstallmentForm({
     const progress =
         totalAmount > 0 ? Math.min(100, Math.round((amountPaid / totalAmount) * 100)) : 0;
     const creator = initialValue?.createdBy ?? currentUser;
+    const installmentDate = toDateInputValue(installmentCreatedAt ?? new Date());
 
     const resetForm = () => {
         setClient({ ...emptyClient });
@@ -124,7 +139,12 @@ export function InstallmentForm({
         setInterestRate(value.interestRate);
         setTotalAmount(value.totalAmount);
         setStatus(value.status);
-        setPayments(value.payments.map((payment) => ({ ...payment })));
+        setPayments(
+            value.payments.map((payment) => ({
+                ...payment,
+                createdAt: toDateInputValue(payment.createdAt),
+            }))
+        );
         setError("");
     };
 
@@ -166,6 +186,16 @@ export function InstallmentForm({
         if (payments.some((payment) => payment.amount < 0)) {
             return "Payment amounts cannot be negative.";
         }
+        if (
+            payments.some(
+                (payment) =>
+                    payment.createdAt &&
+                    installmentDate &&
+                    payment.createdAt < installmentDate
+            )
+        ) {
+            return "Payment date cannot be before the installment date.";
+        }
         return "";
     };
 
@@ -190,6 +220,7 @@ export function InstallmentForm({
             amount: payment.amount,
             paymentMethod: payment.paymentMethod,
             note: payment.note.trim(),
+            createdAt: payment.createdAt,
         })),
     });
 
@@ -279,12 +310,13 @@ export function InstallmentForm({
                                 />
                             </FormField>
                             <FormField label="Phone" htmlFor="installment-client-phone">
-                                <Input
+                                <InternationalPhoneInput
                                     id="installment-client-phone"
                                     value={client.phone}
-                                    onChange={(event) => updateClient("phone", event.target.value)}
-                                    placeholder="9831808283"
+                                    onChange={(value) => updateClient("phone", value)}
+                                    placeholder="+52 983 180 8283"
                                     disabled={readOnly}
+                                    readOnly={readOnly}
                                 />
                             </FormField>
                             <FormField label="Email" htmlFor="installment-client-email">
@@ -407,7 +439,7 @@ export function InstallmentForm({
                                                 <Trash2 className="size-4" />
                                             </Button>
                                         </div>
-                                        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_2fr]">
+                                        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_1fr_2fr]">
                                             <FormField label="Amount" htmlFor={`installment-payment-amount-${payment.id}`}>
                                                 <Input
                                                     id={`installment-payment-amount-${payment.id}`}
@@ -419,6 +451,16 @@ export function InstallmentForm({
                                                         updatePayment(payment.id, "amount", event.target.value)
                                                     }
                                                     className="bg-white"
+                                                    disabled={readOnly}
+                                                />
+                                            </FormField>
+                                            <FormField label="Date" htmlFor={`installment-payment-date-${payment.id}`}>
+                                                <DatePicker
+                                                    id={`installment-payment-date-${payment.id}`}
+                                                    value={payment.createdAt}
+                                                    onChange={(value) =>
+                                                        updatePayment(payment.id, "createdAt", value)
+                                                    }
                                                     disabled={readOnly}
                                                 />
                                             </FormField>

@@ -24,6 +24,7 @@ export type InstallmentPaymentDraft = {
     amount: number;
     paymentMethod: PaymentMethod;
     note: string;
+    createdAt: string;
 };
 
 export type InstallmentDraftPayload = {

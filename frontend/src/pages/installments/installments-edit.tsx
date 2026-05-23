@@ -11,6 +11,7 @@ import type { InstallmentDraftPayload } from "@/types/installments";
 type InstallmentEditLocationState = {
     installment?: InstallmentDraftPayload;
     installmentId?: string;
+    installmentCreatedAt?: string;
 };
 
 export default function InstallmentsEdit() {
@@ -25,6 +26,8 @@ export default function InstallmentsEdit() {
         const fallbackInstallment = findInstallmentById(installmentId);
         return fallbackInstallment ? toInstallmentDraftPayload(fallbackInstallment) : null;
     }, [installmentId, state]);
+    const installmentCreatedAt =
+        state?.installmentCreatedAt ?? findInstallmentById(installmentId)?.createdAt;
 
     const handleUpdate = (payload: InstallmentDraftPayload) => {
         console.log("Installment Update Draft:", {
@@ -62,6 +65,7 @@ export default function InstallmentsEdit() {
                 cancelLabel="Go Back"
                 onSubmit={handleUpdate}
                 onCancel={() => navigate("/installments/board")}
+                installmentCreatedAt={installmentCreatedAt}
             />
         </section>
     );

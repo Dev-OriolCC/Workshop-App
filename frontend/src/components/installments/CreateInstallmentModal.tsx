@@ -16,6 +16,7 @@ type CreateInstallmentModalProps = {
     onUpdate?: (payload: InstallmentDraftPayload) => void;
     onModeChange?: (mode: InstallmentModalMode) => void;
     onEdit?: () => void;
+    installmentCreatedAt?: string;
 };
 
 export function CreateInstallmentModal({
@@ -28,6 +29,7 @@ export function CreateInstallmentModal({
     onUpdate,
     onModeChange,
     onEdit,
+    installmentCreatedAt,
 }: CreateInstallmentModalProps) {
     const isViewMode = mode === "view";
     const isEditMode = mode === "edit";
@@ -87,6 +89,7 @@ export function CreateInstallmentModal({
                             onClose={() => onOpenChange(false)}
                             onEdit={handleEdit}
                             showCloseButton
+                            installmentCreatedAt={installmentCreatedAt}
                         />
                     </DialogPanel>
                 </div>

@@ -154,6 +154,7 @@ export const toInstallmentDraftPayload = (
         amount: payment.amount,
         paymentMethod: payment.paymentMethod,
         note: payment.note,
+        createdAt: payment.createdAt,
     })),
 });
 
