@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import type { Dispatch, DragEvent, SetStateAction } from "react";
 import {
   CalendarDays,
@@ -12,15 +12,15 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export const Component = () => {
+export const Component = ({ onOpenCard }: { onOpenCard?: (card: CardType) => void }) => {
   return (
     <div className="min-h-[calc(100svh-8rem)] w-full overflow-hidden rounded-lg border border-border bg-slate-50">
-      <Board />
+      <Board onOpenCard={onOpenCard} />
     </div>
   );
 };
 
-const Board = () => {
+const Board = ({ onOpenCard }: { onOpenCard?: (card: CardType) => void }) => {
   const [cards, setCards] = useState(DEFAULT_CARDS);
 
   return (
@@ -32,6 +32,7 @@ const Board = () => {
         accentColor="bg-sky-500"
         cards={cards}
         setCards={setCards}
+        onOpenCard={onOpenCard}
       />
       <Column
         title="In Repair"
@@ -40,6 +41,7 @@ const Board = () => {
         accentColor="bg-amber-500"
         cards={cards}
         setCards={setCards}
+        onOpenCard={onOpenCard}
       />
       <Column
         title="Ready"
@@ -48,6 +50,7 @@ const Board = () => {
         accentColor="bg-emerald-500"
         cards={cards}
         setCards={setCards}
+        onOpenCard={onOpenCard}
       />
       <BurnBarrel setCards={setCards} />
     </div>
@@ -61,6 +64,7 @@ type ColumnProps = {
   cards: CardType[];
   column: ColumnType;
   setCards: Dispatch<SetStateAction<CardType[]>>;
+  onOpenCard?: (card: CardType) => void;
 };
 
 const Column = ({
@@ -70,6 +74,7 @@ const Column = ({
   cards,
   column,
   setCards,
+  onOpenCard,
 }: ColumnProps) => {
   const [active, setActive] = useState(false);
 
@@ -196,7 +201,14 @@ const Column = ({
         }`}
       >
         {filteredCards.map((c) => {
-          return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
+          return (
+            <Card
+              key={c.id}
+              {...c}
+              handleDragStart={handleDragStart}
+              onOpenCard={onOpenCard}
+            />
+          );
         })}
         <DropIndicator beforeId={null} column={column} />
       </div>
@@ -206,6 +218,7 @@ const Column = ({
 
 type CardProps = CardType & {
   handleDragStart: (e: DragEvent, card: CardType) => void;
+  onOpenCard?: (card: CardType) => void;
 };
 
 const Card = ({
@@ -219,12 +232,25 @@ const Card = ({
   priority,
   progress,
   handleDragStart,
+  onOpenCard,
 }: CardProps) => {
+  const dragStartedRef = useRef(false);
   const priorityStyles: Record<CardPriority, string> = {
     Low: "bg-slate-100 text-slate-600",
     Medium: "bg-sky-100 text-sky-700",
     High: "bg-amber-100 text-amber-700",
     Urgent: "bg-rose-100 text-rose-700",
+  };
+  const cardPayload: CardType = {
+    title,
+    id,
+    column,
+    client,
+    service,
+    ticket,
+    dueDate,
+    priority,
+    progress,
   };
 
   return (
@@ -233,23 +259,31 @@ const Card = ({
       <motion.div
         layout
         layoutId={id}
-        className="group cursor-grab rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md active:cursor-grabbing"
+        role="button"
+        tabIndex={0}
+        onClick={() => {
+          if (dragStartedRef.current) return;
+          onOpenCard?.(cardPayload);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpenCard?.(cardPayload);
+          }
+        }}
+        className="group cursor-pointer rounded-lg border border-slate-200 bg-white p-3 shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md hover:ring-4 hover:ring-violet-100 focus-visible:border-violet-400 focus-visible:ring-4 focus-visible:ring-violet-100 active:cursor-grabbing"
       >
         <div
           draggable="true"
-          onDragStart={(e: React.DragEvent<HTMLDivElement>) =>
-            handleDragStart(e, {
-              title,
-              id,
-              column,
-              client,
-              service,
-              ticket,
-              dueDate,
-              priority,
-              progress,
-            })
-          }
+          onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
+            dragStartedRef.current = true;
+            handleDragStart(e, cardPayload);
+          }}
+          onDragEnd={() => {
+            window.setTimeout(() => {
+              dragStartedRef.current = false;
+            }, 150);
+          }}
           className="space-y-3"
         >
           <div className="flex items-start justify-between gap-3">
@@ -367,7 +401,7 @@ const BurnBarrel = ({
 type ColumnType = "todo" | "doing" | "done";
 type CardPriority = "Low" | "Medium" | "High" | "Urgent";
 
-type CardType = {
+export type CardType = {
   title: string;
   id: string;
   column: ColumnType;

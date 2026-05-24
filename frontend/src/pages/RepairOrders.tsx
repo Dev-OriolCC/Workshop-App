@@ -1,10 +1,12 @@
 import { CreateRepairOrderModal } from "@/components/repair-orders/CreateRepairOrderModal";
-import { useEffect } from "react";
+import {
+    repairOrderServices,
+    repairOrderUser,
+} from "@/data/repair-orders";
+import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import type {
     RepairOrderDraftPayload,
-    ServiceSummary,
-    UserSummary,
 } from "@/types/repair-orders";
 import type { NavSection } from "@/layouts/MainLayout";
 
@@ -20,49 +22,28 @@ type NavContext = {
     setShowModal: (v: boolean) => void;
 };
 
-const currentUser: UserSummary = {
-    id: 1,
-    name: "Carmela",
-    email: "carmela@workshop.test",
-    phone: "9831808283",
-};
-
-const services: ServiceSummary[] = [
-    {
-        id: "1",
-        name: "Reel repair",
-        category: "REEL_REPAIR",
-        price: 450,
-        active: true,
-    },
-    {
-        id: "2",
-        name: "Rod repair",
-        category: "ROD_REPAIR",
-        price: 320,
-        active: true,
-    },
-    {
-        id: "3",
-        name: "Maintenance",
-        category: "MAINTENANCE",
-        price: 250,
-        active: true,
-    },
-    {
-        id: "4",
-        name: "Other service",
-        category: "OTHER",
-        price: 0,
-        active: true,
-    },
-];
-
 export default function RepairOrders() {
     const { setNavConfig, showModal, setShowModal } = useOutletContext<NavContext>();
+    const [modalMode, setModalMode] = useState<"create" | "view">("create");
+    const [selectedRepairOrder, setSelectedRepairOrder] =
+        useState<RepairOrderDraftPayload | null>(null);
 
     const handleCreateRepairOrder = (payload: RepairOrderDraftPayload) => {
         console.log("Repair Order Created:", payload);
+    };
+
+    const openRepairOrderDetails = (payload: RepairOrderDraftPayload) => {
+        setSelectedRepairOrder(payload);
+        setModalMode("view");
+        setShowModal(true);
+    };
+
+    const handleOpenChange = (open: boolean) => {
+        setShowModal(open);
+        if (!open) {
+            setSelectedRepairOrder(null);
+            setModalMode("create");
+        }
     };
 
     useEffect(() => {
@@ -73,16 +54,24 @@ export default function RepairOrders() {
         });
     }, [setNavConfig]);
 
+    useEffect(() => {
+        if (showModal && !selectedRepairOrder) {
+            setModalMode("create");
+        }
+    }, [selectedRepairOrder, showModal]);
+
     return (
         <div>
             <CreateRepairOrderModal
                 open={showModal}
-                onOpenChange={setShowModal}
+                onOpenChange={handleOpenChange}
                 onSubmit={handleCreateRepairOrder}
-                currentUser={currentUser}
-                services={services}
+                currentUser={repairOrderUser}
+                services={repairOrderServices}
+                mode={modalMode}
+                initialValue={selectedRepairOrder}
             />
-            <Outlet />
+            <Outlet context={{ openRepairOrderDetails }} />
         </div>
     );
 }
