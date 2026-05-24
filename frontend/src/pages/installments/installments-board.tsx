@@ -94,7 +94,7 @@ export default function InstallmentsBoard() {
         }
     };
 
-    const handleEditInstallment = () => {
+    const openEditRoute = (viewMode: "edit" | "whatsapp" = "edit") => {
         if (!selectedInstallment) return;
 
         setModalOpen(false);
@@ -103,8 +103,17 @@ export default function InstallmentsBoard() {
                 installment: toInstallmentDraftPayload(selectedInstallment),
                 installmentId: selectedInstallment.id,
                 installmentCreatedAt: selectedInstallment.createdAt,
+                viewMode,
             },
         });
+    };
+
+    const handleEditInstallment = () => {
+        openEditRoute("edit");
+    };
+
+    const handleSendWhatsAppMessage = () => {
+        openEditRoute("whatsapp");
     };
 
     return (
@@ -144,6 +153,7 @@ export default function InstallmentsBoard() {
                 mode={modalMode}
                 onModeChange={setModalMode}
                 onEdit={handleEditInstallment}
+                onSendWhatsApp={handleSendWhatsAppMessage}
                 initialValue={selectedInstallment ? toInstallmentDraftPayload(selectedInstallment) : null}
                 installmentCreatedAt={selectedInstallment?.createdAt}
             />

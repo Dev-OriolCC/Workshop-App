@@ -16,6 +16,7 @@ type CreateInstallmentModalProps = {
     onUpdate?: (payload: InstallmentDraftPayload) => void;
     onModeChange?: (mode: InstallmentModalMode) => void;
     onEdit?: () => void;
+    onSendWhatsApp?: () => void;
     installmentCreatedAt?: string;
 };
 
@@ -29,6 +30,7 @@ export function CreateInstallmentModal({
     onUpdate,
     onModeChange,
     onEdit,
+    onSendWhatsApp,
     installmentCreatedAt,
 }: CreateInstallmentModalProps) {
     const isViewMode = mode === "view";
@@ -88,6 +90,10 @@ export function CreateInstallmentModal({
                             onCancel={handleCancel}
                             onClose={() => onOpenChange(false)}
                             onEdit={handleEdit}
+                            onSecondaryReadOnlyAction={onSendWhatsApp}
+                            secondaryReadOnlyActionLabel={
+                                onSendWhatsApp ? "Send WhatsApp Message" : undefined
+                            }
                             showCloseButton
                             installmentCreatedAt={installmentCreatedAt}
                         />

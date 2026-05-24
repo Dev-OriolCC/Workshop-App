@@ -51,8 +51,12 @@ type InstallmentFormProps = {
     onCancel?: () => void;
     onClose?: () => void;
     onEdit?: () => void;
+    onSecondaryReadOnlyAction?: () => void;
+    secondaryReadOnlyActionLabel?: string;
     showCloseButton?: boolean;
     installmentCreatedAt?: string;
+    fieldsDisabled?: boolean;
+    hideSubmit?: boolean;
     className?: string;
 };
 
@@ -98,8 +102,12 @@ export function InstallmentForm({
     onCancel,
     onClose,
     onEdit,
+    onSecondaryReadOnlyAction,
+    secondaryReadOnlyActionLabel,
     showCloseButton = false,
     installmentCreatedAt,
+    fieldsDisabled = false,
+    hideSubmit = false,
     className,
 }: InstallmentFormProps) {
     const [client, setClient] = useState<ClientDraft>({ ...emptyClient });
@@ -120,6 +128,7 @@ export function InstallmentForm({
         totalAmount > 0 ? Math.min(100, Math.round((amountPaid / totalAmount) * 100)) : 0;
     const creator = initialValue?.createdBy ?? currentUser;
     const installmentDate = toDateInputValue(installmentCreatedAt ?? new Date());
+    const controlsDisabled = readOnly || fieldsDisabled;
 
     const resetForm = () => {
         setClient({ ...emptyClient });
@@ -250,7 +259,7 @@ export function InstallmentForm({
                     <Select
                         value={status}
                         onValueChange={(value) => setStatus(value as InstallmentStatus)}
-                        disabled={readOnly}
+                        disabled={controlsDisabled}
                     >
                         <SelectTrigger className="h-9 w-[145px] rounded-lg border-slate-200 bg-slate-50 text-xs font-semibold">
                             <SelectValue />
@@ -297,7 +306,7 @@ export function InstallmentForm({
                                     onChange={(event) => updateClient("name", event.target.value)}
                                     placeholder="Marta Ruiz"
                                     required
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Alias" htmlFor="installment-client-alias">
@@ -306,7 +315,7 @@ export function InstallmentForm({
                                     value={client.alias}
                                     onChange={(event) => updateClient("alias", event.target.value)}
                                     placeholder="Marta R."
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Phone" htmlFor="installment-client-phone">
@@ -315,8 +324,8 @@ export function InstallmentForm({
                                     value={client.phone}
                                     onChange={(value) => updateClient("phone", value)}
                                     placeholder="+52 983 180 8283"
-                                    disabled={readOnly}
-                                    readOnly={readOnly}
+                                    disabled={controlsDisabled}
+                                    readOnly={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Email" htmlFor="installment-client-email">
@@ -326,7 +335,7 @@ export function InstallmentForm({
                                     value={client.email}
                                     onChange={(event) => updateClient("email", event.target.value)}
                                     placeholder="client@example.com"
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                         </div>
@@ -336,7 +345,7 @@ export function InstallmentForm({
                                 value={client.comment}
                                 onChange={(event) => updateClient("comment", event.target.value)}
                                 placeholder="Contact preferences or billing notes"
-                                disabled={readOnly}
+                                disabled={controlsDisabled}
                             />
                         </FormField>
                     </section>
@@ -354,7 +363,7 @@ export function InstallmentForm({
                                     onChange={(event) => setArticle(event.target.value)}
                                     placeholder="Shimano Stella FK Reel"
                                     required
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Interest rate" htmlFor="installment-interest">
@@ -365,7 +374,7 @@ export function InstallmentForm({
                                     step="0.01"
                                     value={interestRate}
                                     onChange={(event) => setInterestRate(Number(event.target.value))}
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Total amount" htmlFor="installment-total" required>
@@ -377,7 +386,7 @@ export function InstallmentForm({
                                     value={totalAmount}
                                     onChange={(event) => setTotalAmount(Number(event.target.value))}
                                     required
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                         </div>
@@ -388,7 +397,7 @@ export function InstallmentForm({
                                 onChange={(event) => setComment(event.target.value)}
                                 placeholder="Payment agreement, due dates, or special conditions"
                                 className="min-h-28"
-                                disabled={readOnly}
+                                disabled={controlsDisabled}
                             />
                         </FormField>
                     </section>
@@ -405,7 +414,7 @@ export function InstallmentForm({
                                 size="sm"
                                 className="gap-2 rounded-full"
                                 onClick={() => setPayments((current) => [...current, createPayment()])}
-                                disabled={readOnly}
+                                disabled={controlsDisabled}
                             >
                                 <Plus className="size-4" />
                                 Add payment
@@ -434,7 +443,7 @@ export function InstallmentForm({
                                                         current.filter((currentPayment) => currentPayment.id !== payment.id)
                                                     )
                                                 }
-                                                disabled={readOnly}
+                                                disabled={controlsDisabled}
                                             >
                                                 <Trash2 className="size-4" />
                                             </Button>
@@ -451,7 +460,7 @@ export function InstallmentForm({
                                                         updatePayment(payment.id, "amount", event.target.value)
                                                     }
                                                     className="bg-white"
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                             <FormField label="Date" htmlFor={`installment-payment-date-${payment.id}`}>
@@ -461,7 +470,7 @@ export function InstallmentForm({
                                                     onChange={(value) =>
                                                         updatePayment(payment.id, "createdAt", value)
                                                     }
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                             <FormField label="Method" htmlFor={`installment-payment-method-${payment.id}`}>
@@ -470,7 +479,7 @@ export function InstallmentForm({
                                                     onValueChange={(value) =>
                                                         updatePayment(payment.id, "paymentMethod", value as PaymentMethod)
                                                     }
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 >
                                                     <SelectTrigger id={`installment-payment-method-${payment.id}`} className="bg-white">
                                                         <SelectValue />
@@ -493,7 +502,7 @@ export function InstallmentForm({
                                                     }
                                                     placeholder="Receipt or reference"
                                                     className="bg-white"
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                         </div>
@@ -554,6 +563,11 @@ export function InstallmentForm({
                         <Button type="button" variant="outline" onClick={onClose}>
                             Close
                         </Button>
+                        {secondaryReadOnlyActionLabel && (
+                            <Button type="button" variant="outline" onClick={onSecondaryReadOnlyAction}>
+                                {secondaryReadOnlyActionLabel}
+                            </Button>
+                        )}
                         <Button type="button" className="bg-violet-600 hover:bg-violet-700" onClick={onEdit}>
                             Edit
                         </Button>
@@ -563,9 +577,11 @@ export function InstallmentForm({
                         <Button type="button" variant="outline" onClick={onCancel}>
                             {cancelLabel}
                         </Button>
-                        <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
-                            {submitLabel}
-                        </Button>
+                        {!hideSubmit && (
+                            <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
+                                {submitLabel}
+                            </Button>
+                        )}
                     </>
                 )}
             </footer>

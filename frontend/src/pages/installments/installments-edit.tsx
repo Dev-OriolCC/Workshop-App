@@ -1,4 +1,5 @@
 import { InstallmentForm } from "@/components/installments/InstallmentForm";
+import { WhatsAppMessagesPanel } from "@/components/installments/WhatsAppMessagesPanel";
 import {
     findInstallmentById,
     installmentUser,
@@ -12,6 +13,7 @@ type InstallmentEditLocationState = {
     installment?: InstallmentDraftPayload;
     installmentId?: string;
     installmentCreatedAt?: string;
+    viewMode?: "edit" | "whatsapp";
 };
 
 export default function InstallmentsEdit() {
@@ -28,6 +30,7 @@ export default function InstallmentsEdit() {
     }, [installmentId, state]);
     const installmentCreatedAt =
         state?.installmentCreatedAt ?? findInstallmentById(installmentId)?.createdAt;
+    const isWhatsAppMode = state?.viewMode === "whatsapp";
 
     const handleUpdate = (payload: InstallmentDraftPayload) => {
         console.log("Installment Update Draft:", {
@@ -55,18 +58,27 @@ export default function InstallmentsEdit() {
     }
 
     return (
-        <section className="mx-auto max-w-6xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <InstallmentForm
-                currentUser={initialValue.createdBy ?? installmentUser}
-                initialValue={initialValue}
-                eyebrow="Installment workspace"
-                title="Edit Installment"
-                submitLabel="Update"
-                cancelLabel="Go Back"
-                onSubmit={handleUpdate}
-                onCancel={() => navigate("/installments/board")}
-                installmentCreatedAt={installmentCreatedAt}
-            />
+        <section className="mx-auto grid max-w-7xl gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <InstallmentForm
+                    currentUser={initialValue.createdBy ?? installmentUser}
+                    initialValue={initialValue}
+                    eyebrow={
+                        isWhatsAppMode
+                            ? "WhatsApp message workspace"
+                            : "Installment workspace"
+                    }
+                    title={isWhatsAppMode ? "Installment Details" : "Edit Installment"}
+                    submitLabel="Update"
+                    cancelLabel="Go Back"
+                    onSubmit={handleUpdate}
+                    onCancel={() => navigate("/installments/board")}
+                    installmentCreatedAt={installmentCreatedAt}
+                    fieldsDisabled={isWhatsAppMode}
+                    hideSubmit={isWhatsAppMode}
+                />
+            </div>
+            <WhatsAppMessagesPanel />
         </section>
     );
 }
