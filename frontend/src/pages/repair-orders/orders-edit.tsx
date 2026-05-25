@@ -1,4 +1,5 @@
 import { RepairOrderForm } from "@/components/repair-orders/RepairOrderForm";
+import { WhatsAppMessagesPanel } from "@/components/shared/WhatsAppMessagesPanel";
 import {
     getRepairOrderCreatedAt,
     getRepairOrderDetail,
@@ -13,6 +14,7 @@ type RepairOrderEditLocationState = {
     repairOrder?: RepairOrderDraftPayload;
     repairOrderId?: string;
     repairOrderCreatedAt?: string | null;
+    viewMode?: "edit" | "whatsapp";
 };
 
 export default function OrdersEdit() {
@@ -30,6 +32,7 @@ export default function OrdersEdit() {
         if (state?.repairOrderCreatedAt) return state.repairOrderCreatedAt;
         return repairOrderId ? getRepairOrderCreatedAt(repairOrderId) : null;
     }, [repairOrderId, state]);
+    const isWhatsAppMode = state?.viewMode === "whatsapp";
 
     const handleUpdate = (payload: RepairOrderDraftPayload) => {
         console.log("Repair Order Update Draft:", {
@@ -57,19 +60,34 @@ export default function OrdersEdit() {
     }
 
     return (
-        <section className="mx-auto max-w-6xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <section
+            className={
+                isWhatsAppMode
+                    ? "mx-auto grid max-w-7xl gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]"
+                    : "mx-auto max-w-6xl"
+            }
+        >
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             <RepairOrderForm
                 currentUser={initialValue.createdBy ?? repairOrderUser}
                 services={repairOrderServices}
                 initialValue={initialValue}
-                eyebrow="Repair order workspace"
-                title="Edit Repair Order"
+                eyebrow={
+                    isWhatsAppMode
+                        ? "WhatsApp message workspace"
+                        : "Repair order workspace"
+                }
+                title={isWhatsAppMode ? "Repair Order Details" : "Edit Repair Order"}
                 submitLabel="Update"
                 cancelLabel="Go Back"
                 onSubmit={handleUpdate}
                 onClose={() => navigate("/repair-orders/board")}
                 repairOrderCreatedAt={repairOrderCreatedAt ?? undefined}
+                fieldsDisabled={isWhatsAppMode}
+                hideSubmit={isWhatsAppMode}
             />
+            </div>
+            {isWhatsAppMode && <WhatsAppMessagesPanel />}
         </section>
     );
 }

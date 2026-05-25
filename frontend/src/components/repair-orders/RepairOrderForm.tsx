@@ -60,8 +60,12 @@ type RepairOrderFormProps = {
     onClose?: () => void;
     onSecondaryReadOnlyAction?: () => void;
     secondaryReadOnlyActionLabel?: string;
+    onTertiaryReadOnlyAction?: () => void;
+    tertiaryReadOnlyActionLabel?: string;
     showCloseButton?: boolean;
     repairOrderCreatedAt?: string;
+    fieldsDisabled?: boolean;
+    hideSubmit?: boolean;
 };
 
 const emptyClient: ClientDraft = {
@@ -107,8 +111,12 @@ export function RepairOrderForm({
     onClose,
     onSecondaryReadOnlyAction,
     secondaryReadOnlyActionLabel,
+    onTertiaryReadOnlyAction,
+    tertiaryReadOnlyActionLabel,
     showCloseButton = false,
     repairOrderCreatedAt,
+    fieldsDisabled = false,
+    hideSubmit = false,
 }: RepairOrderFormProps) {
     const firstService = services[0];
 
@@ -146,6 +154,7 @@ export function RepairOrderForm({
     const pendingAmount = Math.max(total - amountPaid, 0);
     const creator = initialValue?.createdBy ?? currentUser;
     const repairOrderDate = toDateInputValue(repairOrderCreatedAt ?? new Date());
+    const controlsDisabled = readOnly || fieldsDisabled;
 
     const resetForm = () => {
         setClient({ ...emptyClient });
@@ -286,7 +295,7 @@ export function RepairOrderForm({
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (readOnly) return;
+        if (controlsDisabled) return;
 
         const validationError = validate();
         if (validationError) {
@@ -312,7 +321,7 @@ export function RepairOrderForm({
                     <Select
                         value={status}
                         onValueChange={(value) => setStatus(value as RepairOrderStatus)}
-                        disabled={readOnly}
+                        disabled={controlsDisabled}
                     >
                         <SelectTrigger className="h-9 w-[150px] rounded-lg border-slate-200 bg-slate-50 text-xs font-semibold">
                             <SelectValue />
@@ -362,7 +371,7 @@ export function RepairOrderForm({
                                     onChange={(event) => updateClient("name", event.target.value)}
                                     placeholder="Jorge Cortes"
                                     required
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Alias" htmlFor="repairorder-client-alias">
@@ -371,7 +380,7 @@ export function RepairOrderForm({
                                     value={client.alias}
                                     onChange={(event) => updateClient("alias", event.target.value)}
                                     placeholder="Jorge C."
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Phone" htmlFor="repairorder-client-phone">
@@ -380,8 +389,8 @@ export function RepairOrderForm({
                                     value={client.phone}
                                     onChange={(value) => updateClient("phone", value)}
                                     placeholder="+52 983 180 8283"
-                                    disabled={readOnly}
-                                    readOnly={readOnly}
+                                    disabled={controlsDisabled}
+                                    readOnly={controlsDisabled}
                                 />
                             </FormField>
                             <FormField label="Email" htmlFor="repairorder-client-email">
@@ -391,7 +400,7 @@ export function RepairOrderForm({
                                     value={client.email}
                                     onChange={(event) => updateClient("email", event.target.value)}
                                     placeholder="client@example.com"
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 />
                             </FormField>
                         </div>
@@ -405,7 +414,7 @@ export function RepairOrderForm({
                                 value={client.comment}
                                 onChange={(event) => updateClient("comment", event.target.value)}
                                 placeholder="Preferences, pickup details, or contact notes"
-                                disabled={readOnly}
+                                disabled={controlsDisabled}
                             />
                         </FormField>
                     </section>
@@ -424,7 +433,7 @@ export function RepairOrderForm({
                                 size="sm"
                                 className="gap-2 rounded-full"
                                 onClick={() => setItems((current) => [...current, createItem()])}
-                                disabled={readOnly}
+                                disabled={controlsDisabled}
                             >
                                 <Plus className="size-4" />
                                 Add item
@@ -450,7 +459,7 @@ export function RepairOrderForm({
                                                 variant="ghost"
                                                 size="icon"
                                                 className="size-8 rounded-full text-slate-400 hover:text-red-500"
-                                                disabled={readOnly || items.length === 1}
+                                                disabled={controlsDisabled || items.length === 1}
                                                 onClick={() =>
                                                     setItems((current) =>
                                                         current.filter((currentItem) => currentItem.id !== item.id)
@@ -465,7 +474,7 @@ export function RepairOrderForm({
                                                 <Select
                                                     value={item.serviceId}
                                                     onValueChange={(value) => updateItem(item.id, "serviceId", value)}
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 >
                                                     <SelectTrigger id={`service-${item.id}`} className="bg-white">
                                                         <SelectValue />
@@ -500,7 +509,7 @@ export function RepairOrderForm({
                                                     onChange={(event) => updateItem(item.id, "quantity", event.target.value)}
                                                     required
                                                     className="bg-white"
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                             <FormField label="Unit price" htmlFor={`unit-price-${item.id}`}>
@@ -513,7 +522,7 @@ export function RepairOrderForm({
                                                     onChange={(event) => updateItem(item.id, "unitPrice", event.target.value)}
                                                     required
                                                     className="bg-white"
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                             <div>
@@ -541,7 +550,7 @@ export function RepairOrderForm({
                             onChange={(event) => setComment(event.target.value)}
                             placeholder="Describe symptoms, promised work, parts needed, or pickup agreement"
                             className="min-h-28"
-                            disabled={readOnly}
+                            disabled={controlsDisabled}
                         />
                     </section>
                 </main>
@@ -571,7 +580,7 @@ export function RepairOrderForm({
                                     size="sm"
                                     className="gap-2 rounded-full"
                                     onClick={() => setPayments((current) => [...current, createPayment()])}
-                                    disabled={readOnly}
+                                    disabled={controlsDisabled}
                                 >
                                     <Plus className="size-4" />
                                     Add
@@ -602,7 +611,7 @@ export function RepairOrderForm({
                                                             )
                                                         )
                                                     }
-                                                    disabled={readOnly}
+                                                    disabled={controlsDisabled}
                                                 >
                                                     <Trash2 className="size-4" />
                                                 </Button>
@@ -619,7 +628,7 @@ export function RepairOrderForm({
                                                             updatePayment(payment.id, "amount", event.target.value)
                                                         }
                                                         className="bg-white"
-                                                        disabled={readOnly}
+                                                        disabled={controlsDisabled}
                                                     />
                                                 </FormField>
                                                 <FormField label="Date" htmlFor={`payment-date-${payment.id}`}>
@@ -629,7 +638,7 @@ export function RepairOrderForm({
                                                         onChange={(value) =>
                                                             updatePayment(payment.id, "createdAt", value)
                                                         }
-                                                        disabled={readOnly}
+                                                        disabled={controlsDisabled}
                                                     />
                                                 </FormField>
                                                 <FormField label="Method" htmlFor={`payment-method-${payment.id}`}>
@@ -642,7 +651,7 @@ export function RepairOrderForm({
                                                                 value as PaymentMethod
                                                             )
                                                         }
-                                                        disabled={readOnly}
+                                                        disabled={controlsDisabled}
                                                     >
                                                         <SelectTrigger id={`payment-method-${payment.id}`} className="bg-white">
                                                             <SelectValue />
@@ -665,7 +674,7 @@ export function RepairOrderForm({
                                                         }
                                                         placeholder="Reference, authorization, or cashier note"
                                                         className="min-h-20 bg-white"
-                                                        disabled={readOnly}
+                                                        disabled={controlsDisabled}
                                                     />
                                                 </FormField>
                                             </div>
@@ -691,13 +700,22 @@ export function RepairOrderForm({
                 {readOnly && secondaryReadOnlyActionLabel && (
                     <Button
                         type="button"
-                        className="bg-violet-600 hover:bg-violet-700"
+                        variant="outline"
                         onClick={onSecondaryReadOnlyAction}
                     >
                         {secondaryReadOnlyActionLabel}
                     </Button>
                 )}
-                {!readOnly && (
+                {readOnly && tertiaryReadOnlyActionLabel && (
+                    <Button
+                        type="button"
+                        className="bg-violet-600 hover:bg-violet-700"
+                        onClick={onTertiaryReadOnlyAction}
+                    >
+                        {tertiaryReadOnlyActionLabel}
+                    </Button>
+                )}
+                {!readOnly && !hideSubmit && (
                     <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
                         {submitLabel}
                     </Button>

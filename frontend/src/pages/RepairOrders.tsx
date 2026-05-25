@@ -60,6 +60,20 @@ export default function RepairOrders() {
         });
     };
 
+    const handleSendWhatsAppMessage = () => {
+        if (!selectedRepairOrder || !selectedRepairOrderId) return;
+
+        setShowModal(false);
+        navigate(`/repair-orders/edit/${selectedRepairOrderId}`, {
+            state: {
+                repairOrder: selectedRepairOrder,
+                repairOrderId: selectedRepairOrderId,
+                repairOrderCreatedAt: selectedRepairOrderCreatedAt,
+                viewMode: "whatsapp",
+            },
+        });
+    };
+
     const handleOpenChange = (open: boolean) => {
         setShowModal(open);
         if (!open) {
@@ -96,6 +110,7 @@ export default function RepairOrders() {
                 initialValue={selectedRepairOrder}
                 repairOrderCreatedAt={selectedRepairOrderCreatedAt}
                 onEdit={handleEditRepairOrder}
+                onSendWhatsApp={handleSendWhatsAppMessage}
             />
             <Outlet context={{ openRepairOrderDetails }} />
         </div>

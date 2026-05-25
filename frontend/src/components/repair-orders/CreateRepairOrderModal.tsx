@@ -18,6 +18,7 @@ type CreateRepairOrderModalProps = {
     initialValue?: RepairOrderDraftPayload | null;
     repairOrderCreatedAt?: string | null;
     onEdit?: () => void;
+    onSendWhatsApp?: () => void;
 };
 
 export function CreateRepairOrderModal({
@@ -30,6 +31,7 @@ export function CreateRepairOrderModal({
     initialValue,
     repairOrderCreatedAt,
     onEdit,
+    onSendWhatsApp,
 }: CreateRepairOrderModalProps) {
     const isViewMode = mode === "view";
 
@@ -62,8 +64,12 @@ export function CreateRepairOrderModal({
                             cancelLabel="Cancel"
                             onSubmit={handleSubmit}
                             onClose={() => onOpenChange(false)}
-                            onSecondaryReadOnlyAction={onEdit}
-                            secondaryReadOnlyActionLabel={isViewMode && onEdit ? "Edit" : undefined}
+                            onSecondaryReadOnlyAction={onSendWhatsApp}
+                            secondaryReadOnlyActionLabel={
+                                isViewMode && onSendWhatsApp ? "Send WhatsApp Message" : undefined
+                            }
+                            onTertiaryReadOnlyAction={onEdit}
+                            tertiaryReadOnlyActionLabel={isViewMode && onEdit ? "Edit" : undefined}
                             showCloseButton
                             repairOrderCreatedAt={repairOrderCreatedAt ?? undefined}
                         />
