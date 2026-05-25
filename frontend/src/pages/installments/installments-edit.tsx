@@ -7,6 +7,7 @@ import {
 } from "@/data/installments";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import type { InstallmentDraftPayload } from "@/types/installments";
 
 type InstallmentEditLocationState = {
@@ -37,6 +38,7 @@ export default function InstallmentsEdit() {
             installmentId: state?.installmentId ?? installmentId,
             payload,
         });
+        toast.success("Installment update draft saved.");
     };
 
     if (!initialValue) {

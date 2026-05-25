@@ -1,6 +1,7 @@
 import { CreateInstallmentModal } from "@/components/installments/CreateInstallmentModal";
 import { useEffect } from "react";
 import { Outlet, useLocation, useOutletContext } from "react-router-dom";
+import toast from "react-hot-toast";
 import type { NavSection } from "@/layouts/MainLayout";
 import type { InstallmentDraftPayload, UserSummary } from "@/types/installments";
 
@@ -30,6 +31,7 @@ export default function Installments() {
 
     const handleCreateInstallment = (payload: InstallmentDraftPayload) => {
         console.log("Installment Created:", payload);
+        toast.success("Installment created.");
     };
 
     useEffect(() => {

@@ -8,6 +8,7 @@ import {
 } from "@/data/repair-orders";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import type { RepairOrderDraftPayload } from "@/types/repair-orders";
 
 type RepairOrderEditLocationState = {
@@ -39,6 +40,7 @@ export default function OrdersEdit() {
             repairOrderId: state?.repairOrderId ?? repairOrderId,
             payload,
         });
+        toast.success("Repair order update draft saved.");
     };
 
     if (!initialValue) {

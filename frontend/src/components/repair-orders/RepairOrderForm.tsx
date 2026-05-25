@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
+import toast from "react-hot-toast";
 import type {
     ClientDraft,
     PaymentMethod,
@@ -132,7 +133,6 @@ export function RepairOrderForm({
     const [comment, setComment] = useState("");
     const [items, setItems] = useState<ItemForm[]>([createItem()]);
     const [payments, setPayments] = useState<PaymentForm[]>([]);
-    const [error, setError] = useState("");
 
     const getService = (serviceId: string) =>
         services.find((service) => service.id === serviceId) ?? firstService;
@@ -162,7 +162,6 @@ export function RepairOrderForm({
         setComment("");
         setItems([createItem()]);
         setPayments([]);
-        setError("");
     };
 
     const hydrateForm = (value: RepairOrderDraftPayload) => {
@@ -183,7 +182,6 @@ export function RepairOrderForm({
                 createdAt: toDateInputValue(payment.createdAt),
             }))
         );
-        setError("");
     };
 
     useEffect(() => {
@@ -299,7 +297,7 @@ export function RepairOrderForm({
 
         const validationError = validate();
         if (validationError) {
-            setError(validationError);
+            toast.error(validationError);
             return;
         }
 
@@ -686,12 +684,6 @@ export function RepairOrderForm({
                     </div>
                 </aside>
             </div>
-
-            {error && (
-                <div className="border-t border-red-100 bg-red-50 px-5 py-3 text-sm font-medium text-red-700">
-                    {error}
-                </div>
-            )}
 
             <footer className="flex flex-col-reverse gap-3 border-t border-border bg-card px-5 py-4 sm:flex-row sm:justify-end">
                 <Button type="button" variant="outline" onClick={onClose}>

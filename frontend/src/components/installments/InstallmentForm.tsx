@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
+import toast from "react-hot-toast";
 import type {
     ClientDraft,
     InstallmentDraftPayload,
@@ -117,7 +118,6 @@ export function InstallmentForm({
     const [totalAmount, setTotalAmount] = useState(0);
     const [status, setStatus] = useState<InstallmentStatus>("ACTIVE");
     const [payments, setPayments] = useState<PaymentForm[]>([]);
-    const [error, setError] = useState("");
 
     const amountPaid = useMemo(
         () => payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
@@ -138,7 +138,6 @@ export function InstallmentForm({
         setTotalAmount(0);
         setStatus("ACTIVE");
         setPayments([]);
-        setError("");
     };
 
     const hydrateForm = (value: InstallmentDraftPayload) => {
@@ -154,7 +153,6 @@ export function InstallmentForm({
                 createdAt: toDateInputValue(payment.createdAt),
             }))
         );
-        setError("");
     };
 
     useEffect(() => {
@@ -239,7 +237,7 @@ export function InstallmentForm({
 
         const validationError = validate();
         if (validationError) {
-            setError(validationError);
+            toast.error(validationError);
             return;
         }
 
@@ -550,12 +548,6 @@ export function InstallmentForm({
                     </div>
                 </aside>
             </div>
-
-            {error && (
-                <div className="border-t border-red-100 bg-red-50 px-5 py-3 text-sm font-medium text-red-700">
-                    {error}
-                </div>
-            )}
 
             <footer className="flex flex-col-reverse gap-3 border-t border-border bg-card px-5 py-4 sm:flex-row sm:justify-end">
                 {readOnly ? (

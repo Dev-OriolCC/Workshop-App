@@ -6,6 +6,7 @@ import {
 } from "@/data/repair-orders";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import toast from "react-hot-toast";
 import type {
     RepairOrderDraftPayload,
 } from "@/types/repair-orders";
@@ -37,6 +38,7 @@ export default function RepairOrders() {
 
     const handleCreateRepairOrder = (payload: RepairOrderDraftPayload) => {
         console.log("Repair Order Created:", payload);
+        toast.success("Repair order created.");
     };
 
     const openRepairOrderDetails = (payload: RepairOrderDraftPayload, repairOrderId: string) => {
