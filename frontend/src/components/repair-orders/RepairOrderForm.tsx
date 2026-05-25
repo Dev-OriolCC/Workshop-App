@@ -308,12 +308,12 @@ export function RepairOrderForm({
 
     return (
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
-            <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+            <header className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         {eyebrow}
                     </p>
-                    <h2 className="mt-1 text-xl font-semibold text-slate-950">
+                    <h2 className="mt-1 text-xl font-semibold text-card-foreground">
                         {title}
                     </h2>
                 </div>
@@ -323,7 +323,7 @@ export function RepairOrderForm({
                         onValueChange={(value) => setStatus(value as RepairOrderStatus)}
                         disabled={controlsDisabled}
                     >
-                        <SelectTrigger className="h-9 w-[150px] rounded-lg border-slate-200 bg-slate-50 text-xs font-semibold">
+                        <SelectTrigger className="h-9 w-[150px] rounded-lg border-border bg-muted/50 text-xs font-semibold">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -335,17 +335,17 @@ export function RepairOrderForm({
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-600 sm:flex">
-                        <UserRound className="size-4 text-slate-400" />
+                    <div className="hidden items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground sm:flex">
+                        <UserRound className="size-4 text-muted-foreground" />
                         <span>Creator</span>
-                        <span className="font-semibold text-slate-900">{creator.name}</span>
+                        <span className="font-semibold text-card-foreground">{creator.name}</span>
                     </div>
                     {showCloseButton && (
                         <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="rounded-full text-slate-500 hover:text-slate-950"
+                            className="rounded-full text-muted-foreground hover:text-foreground"
                             onClick={onClose}
                         >
                             <X className="size-4" />
@@ -356,10 +356,10 @@ export function RepairOrderForm({
 
             <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_22rem]">
                 <main className="space-y-5 p-5">
-                    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                         <div className="mb-4 flex items-center gap-2">
                             <UserRound className="size-4 text-violet-500" />
-                            <h3 className="text-sm font-semibold text-slate-950">
+                            <h3 className="text-sm font-semibold text-card-foreground">
                                 Client information
                             </h3>
                         </div>
@@ -419,11 +419,11 @@ export function RepairOrderForm({
                         </FormField>
                     </section>
 
-                    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                         <div className="mb-4 flex items-center justify-between gap-3">
                             <div className="flex items-center gap-2">
                                 <Wrench className="size-4 text-violet-500" />
-                                <h3 className="text-sm font-semibold text-slate-950">
+                                <h3 className="text-sm font-semibold text-card-foreground">
                                     Repair items
                                 </h3>
                             </div>
@@ -448,17 +448,17 @@ export function RepairOrderForm({
                                 return (
                                     <div
                                         key={item.id}
-                                        className="rounded-lg border border-slate-200 bg-slate-50/70 p-3"
+                                        className="rounded-lg border border-border bg-muted/40 p-3"
                                     >
                                         <div className="mb-3 flex items-center justify-between">
-                                            <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                                                 Item {index + 1}
                                             </span>
                                             <Button
                                                 type="button"
                                                 variant="ghost"
                                                 size="icon"
-                                                className="size-8 rounded-full text-slate-400 hover:text-red-500"
+                                                className="size-8 rounded-full text-muted-foreground hover:text-red-500"
                                                 disabled={controlsDisabled || items.length === 1}
                                                 onClick={() =>
                                                     setItems((current) =>
@@ -476,7 +476,7 @@ export function RepairOrderForm({
                                                     onValueChange={(value) => updateItem(item.id, "serviceId", value)}
                                                     disabled={controlsDisabled}
                                                 >
-                                                    <SelectTrigger id={`service-${item.id}`} className="bg-white">
+                                                    <SelectTrigger id={`service-${item.id}`} className="bg-background">
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -497,7 +497,7 @@ export function RepairOrderForm({
                                                     id={`category-${item.id}`}
                                                     value={service?.category.replace("_", " ") ?? ""}
                                                     readOnly
-                                                    className="bg-white text-xs font-medium text-slate-500"
+                                                    className="bg-background text-xs font-medium text-muted-foreground"
                                                 />
                                             </FormField>
                                             <FormField label="Qty" htmlFor={`quantity-${item.id}`}>
@@ -508,7 +508,7 @@ export function RepairOrderForm({
                                                     value={item.quantity}
                                                     onChange={(event) => updateItem(item.id, "quantity", event.target.value)}
                                                     required
-                                                    className="bg-white"
+                                                    className="bg-background"
                                                     disabled={controlsDisabled}
                                                 />
                                             </FormField>
@@ -521,13 +521,13 @@ export function RepairOrderForm({
                                                     value={item.unitPrice}
                                                     onChange={(event) => updateItem(item.id, "unitPrice", event.target.value)}
                                                     required
-                                                    className="bg-white"
+                                                    className="bg-background"
                                                     disabled={controlsDisabled}
                                                 />
                                             </FormField>
                                             <div>
-                                                <p className="mb-2 text-xs font-medium text-slate-500">Subtotal</p>
-                                                <div className="flex h-9 items-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-950">
+                                                <p className="mb-2 text-xs font-medium text-muted-foreground">Subtotal</p>
+                                                <div className="flex h-9 items-center rounded-md border border-border bg-background px-3 text-sm font-semibold text-card-foreground">
                                                     {formatCurrency(subtotal)}
                                                 </div>
                                             </div>
@@ -538,10 +538,10 @@ export function RepairOrderForm({
                         </div>
                     </section>
 
-                    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                         <div className="mb-4 flex items-center gap-2">
                             <ClipboardList className="size-4 text-violet-500" />
-                            <h3 className="text-sm font-semibold text-slate-950">
+                            <h3 className="text-sm font-semibold text-card-foreground">
                                 Order notes
                             </h3>
                         </div>
@@ -555,12 +555,12 @@ export function RepairOrderForm({
                     </section>
                 </main>
 
-                <aside className="border-t border-slate-200 bg-slate-50/80 p-5 lg:border-l lg:border-t-0">
+                <aside className="border-t border-border bg-muted/30 p-5 lg:border-l lg:border-t-0">
                     <div className="space-y-5 lg:sticky lg:top-5">
-                        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                        <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                             <div className="mb-4 flex items-center gap-2">
                                 <CircleDollarSign className="size-4 text-violet-500" />
-                                <h3 className="text-sm font-semibold text-slate-950">
+                                <h3 className="text-sm font-semibold text-card-foreground">
                                     Payment summary
                                 </h3>
                             </div>
@@ -571,9 +571,9 @@ export function RepairOrderForm({
                             </div>
                         </section>
 
-                        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                        <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                             <div className="mb-4 flex items-center justify-between gap-3">
-                                <h3 className="text-sm font-semibold text-slate-950">Payments</h3>
+                                <h3 className="text-sm font-semibold text-card-foreground">Payments</h3>
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -588,13 +588,13 @@ export function RepairOrderForm({
                             </div>
 
                             {payments.length === 0 ? (
-                                <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
+                                <div className="rounded-lg border border-dashed border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                                     No payment yet. Add one if the client pays an advance.
                                 </div>
                             ) : (
                                 <div className="space-y-3">
                                     {payments.map((payment) => (
-                                        <div key={payment.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <div key={payment.id} className="rounded-lg border border-border bg-muted/40 p-3">
                                             <div className="mb-3 flex items-center justify-between">
                                                 <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700">
                                                     {payment.paymentMethod}
@@ -603,7 +603,7 @@ export function RepairOrderForm({
                                                     type="button"
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 rounded-full text-slate-400 hover:text-red-500"
+                                                    className="size-8 rounded-full text-muted-foreground hover:text-red-500"
                                                     onClick={() =>
                                                         setPayments((current) =>
                                                             current.filter(
@@ -627,7 +627,7 @@ export function RepairOrderForm({
                                                         onChange={(event) =>
                                                             updatePayment(payment.id, "amount", event.target.value)
                                                         }
-                                                        className="bg-white"
+                                                        className="bg-background"
                                                         disabled={controlsDisabled}
                                                     />
                                                 </FormField>
@@ -653,7 +653,7 @@ export function RepairOrderForm({
                                                         }
                                                         disabled={controlsDisabled}
                                                     >
-                                                        <SelectTrigger id={`payment-method-${payment.id}`} className="bg-white">
+                                                        <SelectTrigger id={`payment-method-${payment.id}`} className="bg-background">
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -673,7 +673,7 @@ export function RepairOrderForm({
                                                             updatePayment(payment.id, "note", event.target.value)
                                                         }
                                                         placeholder="Reference, authorization, or cashier note"
-                                                        className="min-h-20 bg-white"
+                                                        className="min-h-20 bg-background"
                                                         disabled={controlsDisabled}
                                                     />
                                                 </FormField>
@@ -693,7 +693,7 @@ export function RepairOrderForm({
                 </div>
             )}
 
-            <footer className="flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-5 py-4 sm:flex-row sm:justify-end">
+            <footer className="flex flex-col-reverse gap-3 border-t border-border bg-card px-5 py-4 sm:flex-row sm:justify-end">
                 <Button type="button" variant="outline" onClick={onClose}>
                     {readOnly ? "Close" : cancelLabel}
                 </Button>
@@ -736,7 +736,7 @@ type FormFieldProps = {
 function FormField({ label, htmlFor, children, className, required }: FormFieldProps) {
     return (
         <label className={`block ${className ?? ""}`} htmlFor={htmlFor}>
-            <span className="mb-2 block text-xs font-medium text-slate-500">
+            <span className="mb-2 block text-xs font-medium text-muted-foreground">
                 {label}
                 {required && <span className="text-red-500"> *</span>}
             </span>
@@ -755,9 +755,9 @@ function SummaryRow({
     strong?: boolean;
 }) {
     return (
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 last:pb-0">
-            <span className="text-slate-500">{label}</span>
-            <span className={strong ? "font-semibold text-slate-950" : "text-slate-700"}>
+        <div className="flex items-center justify-between border-b border-border pb-2 last:border-0 last:pb-0">
+            <span className="text-muted-foreground">{label}</span>
+            <span className={strong ? "font-semibold text-card-foreground" : "text-muted-foreground"}>
                 {value}
             </span>
         </div>

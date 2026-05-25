@@ -59,7 +59,7 @@ export default function InstallmentsEdit() {
 
     return (
         <section className="mx-auto grid max-w-7xl gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                 <InstallmentForm
                     currentUser={initialValue.createdBy ?? installmentUser}
                     initialValue={initialValue}

@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavigationSheet } from "@/components/navigation-sheet";
 import { NavLink, useLocation } from "react-router-dom";
-import { SquarePlusIcon } from "lucide-react";
+import { Moon, SquarePlusIcon, Sun } from "lucide-react";
 import type { NavSection } from "@/layouts/MainLayout";
+import { useTheme } from "@/components/theme/theme-provider";
 
 type NavbarProps = {
     title: string;
@@ -15,6 +16,7 @@ type NavbarProps = {
 
 export default function NavBar({ title, showOrdersTabs, section, showModal, setShowModal }: NavbarProps) {
     const { pathname } = useLocation();
+    const { theme, toggleTheme } = useTheme();
     const isOrdersBoardActive = pathname === "/repair-orders" || pathname === "/repair-orders/board";
     const isInstallmentsBoardActive = pathname === "/installments" || pathname === "/installments/board";
     const showRepairOrdersNav = section === "repair-orders" || showOrdersTabs;
@@ -84,6 +86,20 @@ export default function NavBar({ title, showOrdersTabs, section, showModal, setS
                             {actionLabel}
                         </Button>
                     )}
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="rounded-full"
+                        onClick={toggleTheme}
+                        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+                    >
+                        {theme === "dark" ? (
+                            <Sun className="size-4" />
+                        ) : (
+                            <Moon className="size-4" />
+                        )}
+                    </Button>
                     <Button className="rounded-full">Username</Button>
 
                     {/* Mobile Menu */}

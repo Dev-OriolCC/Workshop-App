@@ -51,7 +51,7 @@ export function CreateRepairOrderModal({
                 <div className="flex min-h-full items-center justify-center p-3 sm:p-6">
                     <DialogPanel
                         transition
-                        className="relative flex max-h-[92svh] w-full max-w-6xl transform flex-col overflow-hidden rounded-xl bg-white text-left shadow-2xl ring-1 ring-slate-900/10 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in data-closed:sm:scale-95"
+                        className="relative flex max-h-[92svh] w-full max-w-6xl transform flex-col overflow-hidden rounded-xl bg-card text-left text-card-foreground shadow-2xl ring-1 ring-border transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in data-closed:sm:scale-95"
                     >
                         <RepairOrderForm
                             currentUser={currentUser}

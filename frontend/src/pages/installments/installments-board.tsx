@@ -188,7 +188,7 @@ function InstallmentTicketCard({
             aria-label={`Open details for ${installment.article}`}
             onClick={() => onOpen(installment)}
             onKeyDown={handleKeyDown}
-            className="group overflow-hidden rounded-xl border border-border bg-background shadow-sm outline-none transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg hover:ring-4 hover:ring-violet-100 focus-visible:border-violet-400 focus-visible:ring-4 focus-visible:ring-violet-100"
+            className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm outline-none transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg hover:ring-4 hover:ring-violet-500/15 focus-visible:border-violet-400 focus-visible:ring-4 focus-visible:ring-violet-500/20"
         >
             <div className="flex flex-col gap-4 border-b border-border bg-muted/30 p-4 transition-colors group-hover:bg-violet-50/60 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 space-y-2">

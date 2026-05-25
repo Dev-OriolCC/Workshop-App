@@ -185,17 +185,17 @@ export default function Home() {
 
     return (
         <div className="space-y-6">
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <div className="inline-flex items-center gap-2 rounded-full border border-violet-100 bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
                             <CalendarClock className="size-4" />
                             {formatDateTime(now)}
                         </div>
-                        <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-950">
+                        <h1 className="mt-4 text-3xl font-bold tracking-tight text-card-foreground">
                             Welcome back to Workshop
                         </h1>
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
                             Monitor repair orders, installment balances, and customer activity from one clean workspace.
                         </p>
                     </div>

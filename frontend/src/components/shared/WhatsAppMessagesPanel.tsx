@@ -51,27 +51,27 @@ export function WhatsAppMessagesPanel() {
     };
 
     return (
-        <aside className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <aside className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-sm">
             <div className="flex items-center gap-2">
                 <span className="flex size-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                     <MessageCircle className="size-5" />
                 </span>
                 <div>
-                    <h2 className="text-base font-semibold text-slate-950">
+                    <h2 className="text-base font-semibold text-card-foreground">
                         WhatsApp Messages
                     </h2>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                         Static message workspace for future OpenWA integration.
                     </p>
                 </div>
             </div>
 
-            <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-3">
                 <Textarea
                     value={message}
                     onChange={(event) => setMessage(event.target.value)}
                     placeholder="Write a short WhatsApp message"
-                    className="min-h-28 bg-white"
+                    className="min-h-28 bg-background"
                 />
                 <Button
                     type="button"
@@ -84,17 +84,17 @@ export function WhatsAppMessagesPanel() {
             </div>
 
             <section className="space-y-3">
-                <h3 className="text-sm font-semibold text-slate-950">History</h3>
+                <h3 className="text-sm font-semibold text-card-foreground">History</h3>
                 <div className="space-y-3">
                     {history.map((historyItem) => (
                         <article
                             key={historyItem.id}
-                            className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                            className="rounded-lg border border-border bg-muted/40 p-3"
                         >
-                            <p className="text-xs font-medium text-slate-500">
+                            <p className="text-xs font-medium text-muted-foreground">
                                 {formatDateTime(historyItem.date)}
                             </p>
-                            <p className="mt-2 text-sm leading-6 text-slate-700">
+                            <p className="mt-2 text-sm leading-6 text-card-foreground">
                                 {historyItem.text}
                             </p>
                         </article>

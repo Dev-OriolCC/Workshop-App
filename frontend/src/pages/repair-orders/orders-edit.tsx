@@ -67,7 +67,7 @@ export default function OrdersEdit() {
                     : "mx-auto max-w-6xl"
             }
         >
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <RepairOrderForm
                 currentUser={initialValue.createdBy ?? repairOrderUser}
                 services={repairOrderServices}

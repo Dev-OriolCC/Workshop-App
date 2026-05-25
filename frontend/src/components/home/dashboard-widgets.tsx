@@ -22,21 +22,21 @@ type StatCardProps = {
 };
 
 const toneStyles: Record<StatCardProps["tone"], string> = {
-    violet: "bg-violet-50 text-violet-700 ring-violet-100",
-    emerald: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-    sky: "bg-sky-50 text-sky-700 ring-sky-100",
-    amber: "bg-amber-50 text-amber-700 ring-amber-100",
-    rose: "bg-rose-50 text-rose-700 ring-rose-100",
-    slate: "bg-slate-100 text-slate-700 ring-slate-200",
+    violet: "bg-violet-500/10 text-violet-600 ring-violet-500/20 dark:text-violet-300",
+    emerald: "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20 dark:text-emerald-300",
+    sky: "bg-sky-500/10 text-sky-600 ring-sky-500/20 dark:text-sky-300",
+    amber: "bg-amber-500/10 text-amber-700 ring-amber-500/20 dark:text-amber-300",
+    rose: "bg-rose-500/10 text-rose-600 ring-rose-500/20 dark:text-rose-300",
+    slate: "bg-muted text-muted-foreground ring-border",
 };
 
 export function StatCard({ label, value, detail, icon, tone }: StatCardProps) {
     return (
-        <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <article className="rounded-xl border border-border bg-card p-4 shadow-sm">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <p className="text-sm font-medium text-slate-500">{label}</p>
-                    <p className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
+                    <p className="text-sm font-medium text-muted-foreground">{label}</p>
+                    <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">
                         {value}
                     </p>
                 </div>
@@ -49,7 +49,7 @@ export function StatCard({ label, value, detail, icon, tone }: StatCardProps) {
                     {icon}
                 </span>
             </div>
-            <p className="mt-3 text-sm text-slate-500">{detail}</p>
+            <p className="mt-3 text-sm text-muted-foreground">{detail}</p>
         </article>
     );
 }
@@ -67,7 +67,7 @@ const ranges: { value: RangeKey; label: string }[] = [
 
 export function RangeSelector({ value, onChange }: RangeSelectorProps) {
     return (
-        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+        <div className="inline-flex rounded-lg border border-border bg-muted p-1">
             {ranges.map((range) => (
                 <button
                     key={range.value}
@@ -76,8 +76,8 @@ export function RangeSelector({ value, onChange }: RangeSelectorProps) {
                     className={cn(
                         "rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
                         value === range.value
-                            ? "bg-white text-slate-950 shadow-sm"
-                            : "text-slate-500 hover:text-slate-900"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                     )}
                 >
                     {range.label}
@@ -95,13 +95,13 @@ type AreaChartPanelProps = {
 
 export function AreaChartPanel({ data, range, onRangeChange }: AreaChartPanelProps) {
     return (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-950">
+                    <h2 className="text-base font-semibold text-card-foreground">
                         Activity trend
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Static comparison of repair orders and installments.
                     </p>
                 </div>
@@ -148,7 +148,7 @@ function MiniAreaChart({ data }: { data: SeriesPoint[] }) {
     };
 
     return (
-        <div className="w-full overflow-hidden rounded-lg border border-slate-100 bg-slate-50">
+        <div className="w-full overflow-hidden rounded-lg border border-border bg-muted/40">
             <svg
                 viewBox={`0 0 ${width} ${height}`}
                 role="img"
@@ -176,7 +176,8 @@ function MiniAreaChart({ data }: { data: SeriesPoint[] }) {
                             x2={width - padding}
                             y1={y}
                             y2={y}
-                            stroke="#e2e8f0"
+                            stroke="currentColor"
+                            className="text-border"
                             strokeWidth="1"
                         />
                     );
@@ -209,7 +210,7 @@ function MiniAreaChart({ data }: { data: SeriesPoint[] }) {
                             x={xFor(index)}
                             y={height - 8}
                             textAnchor="middle"
-                            className="fill-slate-500 text-[11px] font-medium"
+                            className="fill-muted-foreground text-[11px] font-medium"
                         >
                             {point.label}
                         </text>
@@ -235,14 +236,14 @@ export function DonutChartPanel({ paid, owed, formatCurrency }: DonutChartProps)
     const paidDash = (paidPercent / 100) * circumference;
 
     return (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
             <div className="flex items-center gap-2">
                 <CircleDollarSign className="size-4 text-emerald-600" />
-                <h2 className="text-base font-semibold text-slate-950">
+                <h2 className="text-base font-semibold text-card-foreground">
                     Installment money
                 </h2>
             </div>
-            <p className="mt-1 text-sm text-slate-500">Paid vs owed balance.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Paid vs owed balance.</p>
 
             <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row">
                 <div className="relative size-40">
@@ -267,8 +268,8 @@ export function DonutChartPanel({ paid, owed, formatCurrency }: DonutChartProps)
                         />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-2xl font-bold text-slate-950">{paidPercent}%</span>
-                        <span className="text-xs font-medium text-slate-500">paid</span>
+                        <span className="text-2xl font-bold text-card-foreground">{paidPercent}%</span>
+                        <span className="text-xs font-medium text-muted-foreground">paid</span>
                     </div>
                 </div>
 
@@ -293,19 +294,19 @@ export function DistributionPanel({ title, description, items }: DistributionPan
     const total = Math.max(1, items.reduce((sum, item) => sum + item.value, 0));
 
     return (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-950">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{description}</p>
+        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-card-foreground">{title}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
             <div className="mt-5 space-y-4">
                 {items.map((item) => {
                     const width = Math.round((item.value / total) * 100);
                     return (
                         <div key={item.label}>
                             <div className="mb-2 flex items-center justify-between text-sm">
-                                <span className="font-medium text-slate-700">{item.label}</span>
-                                <span className="font-semibold text-slate-500">{item.value}</span>
+                                <span className="font-medium text-card-foreground">{item.label}</span>
+                                <span className="font-semibold text-muted-foreground">{item.value}</span>
                             </div>
-                            <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div className="h-2 overflow-hidden rounded-full bg-muted">
                                 <div
                                     className={cn("h-full rounded-full", item.color)}
                                     style={{ width: `${width}%` }}
@@ -330,18 +331,18 @@ export function HistoryLinkCard({ title, description, to, icon }: HistoryLinkCar
     return (
         <Link
             to={to}
-            className="group flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md focus-visible:ring-2 focus-visible:ring-violet-300"
+            className="group flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md focus-visible:ring-2 focus-visible:ring-violet-300"
         >
             <div className="flex items-center gap-3">
-                <span className="flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+                <span className="flex size-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     {icon}
                 </span>
                 <div>
-                    <h3 className="font-semibold text-slate-950">{title}</h3>
-                    <p className="text-sm text-slate-500">{description}</p>
+                    <h3 className="font-semibold text-card-foreground">{title}</h3>
+                    <p className="text-sm text-muted-foreground">{description}</p>
                 </div>
             </div>
-            <ArrowRight className="size-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-violet-600" />
+            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-violet-600" />
         </Link>
     );
 }
@@ -352,17 +353,17 @@ type RecentActivityProps = {
 
 export function RecentActivity({ items }: RecentActivityProps) {
     return (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-950">Recent activity</h2>
-            <p className="mt-1 text-sm text-slate-500">
+        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-card-foreground">Recent activity</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
                 A quick look at static records from this workspace.
             </p>
-            <div className="mt-5 divide-y divide-slate-100">
+            <div className="mt-5 divide-y divide-border">
                 {items.map((item) => (
                     <div key={`${item.label}-${item.detail}`} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
                         <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-slate-800">{item.label}</p>
-                            <p className="truncate text-xs text-slate-500">{item.detail}</p>
+                            <p className="truncate text-sm font-semibold text-card-foreground">{item.label}</p>
+                            <p className="truncate text-xs text-muted-foreground">{item.detail}</p>
                         </div>
                         <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", item.tone)}>
                             {item.value}
@@ -376,7 +377,7 @@ export function RecentActivity({ items }: RecentActivityProps) {
 
 function LegendItem({ color, label }: { color: string; label: string }) {
     return (
-        <span className="inline-flex items-center gap-2 text-slate-600">
+        <span className="inline-flex items-center gap-2 text-muted-foreground">
             <span className={cn("size-2.5 rounded-full", color)} />
             {label}
         </span>
@@ -398,11 +399,11 @@ function MoneyRow({
         <div className="flex items-center justify-between gap-3 text-sm">
             <div className="flex items-center gap-2">
                 <span className={cn("size-2.5 rounded-full", color)} />
-                <span className="font-medium text-slate-600">{label}</span>
+                <span className="font-medium text-muted-foreground">{label}</span>
             </div>
             <div className="text-right">
-                <p className="font-semibold text-slate-950">{value}</p>
-                <p className="text-xs text-slate-500">{detail}</p>
+                <p className="font-semibold text-card-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground">{detail}</p>
             </div>
         </div>
     );

@@ -15,7 +15,7 @@ export function DatePicker({ id, value, onChange, disabled }: DatePickerProps) {
             value={value}
             onChange={(event) => onChange(event.target.value)}
             disabled={disabled}
-            className="bg-white"
+            className="bg-background"
         />
     );
 }

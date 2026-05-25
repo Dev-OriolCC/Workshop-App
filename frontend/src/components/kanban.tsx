@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 
 export const Component = ({ onOpenCard }: { onOpenCard?: (card: CardType) => void }) => {
   return (
-    <div className="min-h-[calc(100svh-8rem)] w-full overflow-hidden rounded-lg border border-border bg-slate-50">
+    <div className="min-h-[calc(100svh-8rem)] w-full overflow-hidden rounded-lg border border-border bg-muted/40">
       <Board onOpenCard={onOpenCard} />
     </div>
   );
@@ -182,13 +182,13 @@ const Column = ({
   const filteredCards = cards.filter((c) => c.column === column);
 
   return (
-    <div className="flex min-h-[34rem] w-[18rem] shrink-0 flex-col rounded-lg border border-white/70 bg-white/75 shadow-sm shadow-slate-200/80 backdrop-blur">
-      <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3">
+    <div className="flex min-h-[34rem] w-[18rem] shrink-0 flex-col rounded-lg border border-border bg-card/80 shadow-sm backdrop-blur">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
           <span className={`size-2.5 rounded-full ${accentColor}`} />
           <h3 className={`text-sm font-semibold ${headingColor}`}>{title}</h3>
         </div>
-        <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-500 shadow-sm">
+        <span className="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-semibold text-muted-foreground shadow-sm">
           {filteredCards.length}
         </span>
       </div>
@@ -197,7 +197,7 @@ const Column = ({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={`flex-1 rounded-b-lg p-3 transition-colors ${
-          active ? "bg-slate-200/70" : "bg-transparent"
+          active ? "bg-muted" : "bg-transparent"
         }`}
       >
         {filteredCards.map((c) => {
@@ -236,7 +236,7 @@ const Card = ({
 }: CardProps) => {
   const dragStartedRef = useRef(false);
   const priorityStyles: Record<CardPriority, string> = {
-    Low: "bg-slate-100 text-slate-600",
+    Low: "bg-muted text-muted-foreground",
     Medium: "bg-sky-100 text-sky-700",
     High: "bg-amber-100 text-amber-700",
     Urgent: "bg-rose-100 text-rose-700",
@@ -271,7 +271,7 @@ const Card = ({
             onOpenCard?.(cardPayload);
           }
         }}
-        className="group cursor-pointer rounded-lg border border-slate-200 bg-white p-3 shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md hover:ring-4 hover:ring-violet-100 focus-visible:border-violet-400 focus-visible:ring-4 focus-visible:ring-violet-100 active:cursor-grabbing"
+        className="group cursor-pointer rounded-lg border border-border bg-card p-3 shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md hover:ring-4 hover:ring-violet-500/15 focus-visible:border-violet-400 focus-visible:ring-4 focus-visible:ring-violet-500/20 active:cursor-grabbing"
       >
         <div
           draggable="true"
@@ -288,40 +288,40 @@ const Card = ({
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {ticket}
               </p>
-              <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+              <p className="mt-1 text-sm font-semibold leading-5 text-card-foreground">
                 {title}
               </p>
             </div>
-            <GripVertical className="mt-1 size-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-500" />
+            <GripVertical className="mt-1 size-4 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-muted-foreground" />
           </div>
 
-          <div className="space-y-2 text-xs text-slate-500">
+          <div className="space-y-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
-              <UserRound className="size-3.5 text-slate-400" />
+              <UserRound className="size-3.5 text-muted-foreground" />
               <span className="truncate">{client}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Wrench className="size-3.5 text-slate-400" />
+              <Wrench className="size-3.5 text-muted-foreground" />
               <span className="truncate">{service}</span>
             </div>
             <div className="flex items-center gap-2">
-              <CalendarDays className="size-3.5 text-slate-400" />
+              <CalendarDays className="size-3.5 text-muted-foreground" />
               <span>{dueDate}</span>
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-emerald-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">
+              <span className="text-xs font-medium text-muted-foreground">
                 {progress}% complete
               </span>
               <span
@@ -386,7 +386,7 @@ const BurnBarrel = ({
       className={`mt-14 grid h-28 w-28 shrink-0 place-content-center rounded-lg border text-3xl shadow-sm transition-colors ${
         active
           ? "border-emerald-300 bg-emerald-50 text-emerald-600"
-          : "border-slate-200 bg-white/70 text-slate-400"
+          : "border-border bg-card/70 text-muted-foreground"
       }`}
     >
       {active ? (
