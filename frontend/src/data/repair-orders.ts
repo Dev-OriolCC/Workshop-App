@@ -46,6 +46,16 @@ const reelRepair = repairOrderServices[0];
 const rodRepair = repairOrderServices[1];
 const maintenance = repairOrderServices[2];
 
+export const repairOrderCreatedAtByTicket: Record<string, string> = {
+    "RO-1048": "2026-05-20",
+    "RO-1051": "2026-05-21",
+    "RO-1053": "2026-05-22",
+    "RO-1042": "2026-05-16",
+    "RO-1045": "2026-05-18",
+    "RO-1038": "2026-05-10",
+    "RO-1039": "2026-05-12",
+};
+
 export const repairOrderDetails: Record<string, RepairOrderDraftPayload> = {
     "RO-1048": {
         client: {
@@ -101,6 +111,7 @@ export const repairOrderDetails: Record<string, RepairOrderDraftPayload> = {
                 amount: 150,
                 paymentMethod: "CASH",
                 note: "Inspection deposit",
+                createdAt: "2026-05-21",
             },
         ],
     },
@@ -158,6 +169,7 @@ export const repairOrderDetails: Record<string, RepairOrderDraftPayload> = {
                 amount: 200,
                 paymentMethod: "TRANSFER",
                 note: "Parts advance",
+                createdAt: "2026-05-17",
             },
         ],
     },
@@ -215,6 +227,7 @@ export const repairOrderDetails: Record<string, RepairOrderDraftPayload> = {
                 amount: 250,
                 paymentMethod: "CARD",
                 note: "Paid at pickup",
+                createdAt: "2026-05-14",
             },
         ],
     },
@@ -247,9 +260,13 @@ export const repairOrderDetails: Record<string, RepairOrderDraftPayload> = {
                 amount: 100,
                 paymentMethod: "CASH",
                 note: "Deposit",
+                createdAt: "2026-05-12",
             },
         ],
     },
 };
 
 export const getRepairOrderDetail = (ticket: string) => repairOrderDetails[ticket] ?? null;
+
+export const getRepairOrderCreatedAt = (ticket: string) =>
+    repairOrderCreatedAtByTicket[ticket] ?? null;

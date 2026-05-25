@@ -5,7 +5,7 @@ import type { RepairOrderDraftPayload } from "@/types/repair-orders";
 import type { CardType } from "@/components/kanban";
 
 type RepairOrdersBoardContext = {
-    openRepairOrderDetails: (payload: RepairOrderDraftPayload) => void;
+    openRepairOrderDetails: (payload: RepairOrderDraftPayload, repairOrderId: string) => void;
 };
 
 export default function OrdersBoard() {
@@ -14,7 +14,7 @@ export default function OrdersBoard() {
     const handleOpenCard = (card: CardType) => {
         const payload = getRepairOrderDetail(card.ticket);
         if (!payload) return;
-        openRepairOrderDetails(payload);
+        openRepairOrderDetails(payload, card.ticket);
     };
 
     return (

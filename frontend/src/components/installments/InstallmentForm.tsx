@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/installments/DatePicker";
-import { InternationalPhoneInput } from "@/components/installments/InternationalPhoneInput";
+import { DatePicker } from "@/components/shared/DatePicker";
+import { InternationalPhoneInput } from "@/components/shared/InternationalPhoneInput";
 import { Input } from "@/components/ui/input";
 import {
     Select,

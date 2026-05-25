@@ -40,6 +40,7 @@ export type RepairOrderPaymentDraft = {
     amount: number;
     paymentMethod: PaymentMethod;
     note: string;
+    createdAt: string;
 };
 
 export type RepairOrderDraftPayload = {

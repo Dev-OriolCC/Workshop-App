@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/shared/DatePicker";
+import { InternationalPhoneInput } from "@/components/shared/InternationalPhoneInput";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -42,6 +44,7 @@ type PaymentForm = {
     amount: number;
     paymentMethod: PaymentMethod;
     note: string;
+    createdAt: string;
 };
 
 type RepairOrderFormProps = {
@@ -55,7 +58,10 @@ type RepairOrderFormProps = {
     cancelLabel?: string;
     onSubmit?: (payload: RepairOrderDraftPayload) => void;
     onClose?: () => void;
+    onSecondaryReadOnlyAction?: () => void;
+    secondaryReadOnlyActionLabel?: string;
     showCloseButton?: boolean;
+    repairOrderCreatedAt?: string;
 };
 
 const emptyClient: ClientDraft = {
@@ -72,11 +78,20 @@ const formatCurrency = (value: number) =>
         currency: "USD",
     }).format(value);
 
+const toDateInputValue = (value: string | Date) => {
+    const date = typeof value === "string" ? new Date(value) : value;
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toISOString().slice(0, 10);
+};
+
+const todayDateInputValue = () => toDateInputValue(new Date());
+
 const createPayment = (): PaymentForm => ({
     id: crypto.randomUUID(),
     amount: 0,
     paymentMethod: "CASH",
     note: "",
+    createdAt: todayDateInputValue(),
 });
 
 export function RepairOrderForm({
@@ -90,7 +105,10 @@ export function RepairOrderForm({
     cancelLabel = "Cancel",
     onSubmit,
     onClose,
+    onSecondaryReadOnlyAction,
+    secondaryReadOnlyActionLabel,
     showCloseButton = false,
+    repairOrderCreatedAt,
 }: RepairOrderFormProps) {
     const firstService = services[0];
 
@@ -127,6 +145,7 @@ export function RepairOrderForm({
 
     const pendingAmount = Math.max(total - amountPaid, 0);
     const creator = initialValue?.createdBy ?? currentUser;
+    const repairOrderDate = toDateInputValue(repairOrderCreatedAt ?? new Date());
 
     const resetForm = () => {
         setClient({ ...emptyClient });
@@ -149,7 +168,12 @@ export function RepairOrderForm({
                 unitPrice: item.unitPrice,
             }))
         );
-        setPayments(value.payments.map((payment) => ({ ...payment })));
+        setPayments(
+            value.payments.map((payment) => ({
+                ...payment,
+                createdAt: toDateInputValue(payment.createdAt),
+            }))
+        );
         setError("");
     };
 
@@ -214,6 +238,16 @@ export function RepairOrderForm({
         if (payments.some((payment) => payment.amount < 0)) {
             return "Payment amounts cannot be negative.";
         }
+        if (
+            payments.some(
+                (payment) =>
+                    payment.createdAt &&
+                    repairOrderDate &&
+                    payment.createdAt < repairOrderDate
+            )
+        ) {
+            return "Payment date cannot be before the repair order date.";
+        }
         return "";
     };
 
@@ -246,6 +280,7 @@ export function RepairOrderForm({
             amount: payment.amount,
             paymentMethod: payment.paymentMethod,
             note: payment.note.trim(),
+            createdAt: payment.createdAt,
         })),
     });
 
@@ -340,12 +375,13 @@ export function RepairOrderForm({
                                 />
                             </FormField>
                             <FormField label="Phone" htmlFor="repairorder-client-phone">
-                                <Input
+                                <InternationalPhoneInput
                                     id="repairorder-client-phone"
                                     value={client.phone}
-                                    onChange={(event) => updateClient("phone", event.target.value)}
-                                    placeholder="9831808283"
+                                    onChange={(value) => updateClient("phone", value)}
+                                    placeholder="+52 983 180 8283"
                                     disabled={readOnly}
+                                    readOnly={readOnly}
                                 />
                             </FormField>
                             <FormField label="Email" htmlFor="repairorder-client-email">
@@ -586,6 +622,16 @@ export function RepairOrderForm({
                                                         disabled={readOnly}
                                                     />
                                                 </FormField>
+                                                <FormField label="Date" htmlFor={`payment-date-${payment.id}`}>
+                                                    <DatePicker
+                                                        id={`payment-date-${payment.id}`}
+                                                        value={payment.createdAt}
+                                                        onChange={(value) =>
+                                                            updatePayment(payment.id, "createdAt", value)
+                                                        }
+                                                        disabled={readOnly}
+                                                    />
+                                                </FormField>
                                                 <FormField label="Method" htmlFor={`payment-method-${payment.id}`}>
                                                     <Select
                                                         value={payment.paymentMethod}
@@ -642,6 +688,15 @@ export function RepairOrderForm({
                 <Button type="button" variant="outline" onClick={onClose}>
                     {readOnly ? "Close" : cancelLabel}
                 </Button>
+                {readOnly && secondaryReadOnlyActionLabel && (
+                    <Button
+                        type="button"
+                        className="bg-violet-600 hover:bg-violet-700"
+                        onClick={onSecondaryReadOnlyAction}
+                    >
+                        {secondaryReadOnlyActionLabel}
+                    </Button>
+                )}
                 {!readOnly && (
                     <Button type="submit" className="bg-violet-600 hover:bg-violet-700">
                         {submitLabel}

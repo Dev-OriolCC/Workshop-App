@@ -16,6 +16,8 @@ type CreateRepairOrderModalProps = {
     services: ServiceSummary[];
     mode?: RepairOrderModalMode;
     initialValue?: RepairOrderDraftPayload | null;
+    repairOrderCreatedAt?: string | null;
+    onEdit?: () => void;
 };
 
 export function CreateRepairOrderModal({
@@ -26,6 +28,8 @@ export function CreateRepairOrderModal({
     services,
     mode = "create",
     initialValue,
+    repairOrderCreatedAt,
+    onEdit,
 }: CreateRepairOrderModalProps) {
     const isViewMode = mode === "view";
 
@@ -58,7 +62,10 @@ export function CreateRepairOrderModal({
                             cancelLabel="Cancel"
                             onSubmit={handleSubmit}
                             onClose={() => onOpenChange(false)}
+                            onSecondaryReadOnlyAction={onEdit}
+                            secondaryReadOnlyActionLabel={isViewMode && onEdit ? "Edit" : undefined}
                             showCloseButton
+                            repairOrderCreatedAt={repairOrderCreatedAt ?? undefined}
                         />
                     </DialogPanel>
                 </div>
