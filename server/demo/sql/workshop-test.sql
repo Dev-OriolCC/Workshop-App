@@ -12,7 +12,7 @@ USE workshop_db_test;
 
 -- -------------------------------------------------------------
 --  1. roles
---     Stores the two system roles: admin and superadmin.
+--     Stores the two system roles: ADMIN and SUPERADMIN.
 -- -------------------------------------------------------------
 CREATE TABLE roles (
   id        BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -23,10 +23,10 @@ CREATE TABLE roles (
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci
-  COMMENT='System roles: admin, superadmin';
+  COMMENT='System roles: ADMIN, SUPERADMIN';
 
 -- Seed default roles
-INSERT INTO roles (role_name) VALUES ('admin'), ('superadmin');
+INSERT INTO roles (role_name) VALUES ('ADMIN'), ('SUPERADMIN');
 
 
 -- -------------------------------------------------------------
@@ -87,11 +87,11 @@ CREATE TABLE services (
   id         BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
   name       VARCHAR(120)     NOT NULL,
   category   ENUM(
-               'reel_repair',
-               'rod_repair',
-               'maintenance',
-               'other'
-             )                NOT NULL DEFAULT 'other',
+               'REEL_REPAIR',
+               'ROD_REPAIR',
+               'MAINTENANCE',
+               'OTHER'
+             )                NOT NULL DEFAULT 'OTHER',
   price      DECIMAL(10,2)    NOT NULL DEFAULT 0.00,
   active     TINYINT(1)       NOT NULL DEFAULT 1  COMMENT '1 = available, 0 = retired',
   created_at TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -116,11 +116,11 @@ CREATE TABLE repair_orders (
   client_id      BIGINT UNSIGNED  NOT NULL,
   created_by     BIGINT UNSIGNED  NOT NULL           COMMENT 'User who created the order',
   status         ENUM(
-                   'pending',
-                   'in_progress',
-                   'ready',
-                   'completed'
-                 )                NOT NULL DEFAULT 'pending',
+                   'PENDING',
+                   'IN_PROGRESS',
+                   'READY',
+                   'COMPLETED'
+                 )                NOT NULL DEFAULT 'PENDING',
   comment        TEXT,
   total          DECIMAL(10,2)    NOT NULL DEFAULT 0.00,
   amount_paid    DECIMAL(10,2)    NOT NULL DEFAULT 0.00,
@@ -185,9 +185,9 @@ CREATE TABLE repair_order_payments (
   repair_order_id BIGINT UNSIGNED NOT NULL,
   amount          DECIMAL(10,2)   NOT NULL,
   payment_method  ENUM(
-                    'cash',
-                    'transfer',
-                    'card'
+                    'CASH',
+                    'TRANSFER',
+                    'CARD'
                   )               NOT NULL,
   note            TEXT,
   created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -224,10 +224,10 @@ CREATE TABLE installments (
   pending_amount DECIMAL(10,2)    NOT NULL DEFAULT 0.00
                                   COMMENT 'total_amount − amount_paid',
   status         ENUM(
-                   'active',
-                   'completed',
-                   'defaulted'
-                 )                NOT NULL DEFAULT 'active',
+                   'ACTIVE',
+                   'COMPLETED',
+                   'DEFAULTED'
+                 )                NOT NULL DEFAULT 'ACTIVE',
   created_at     TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP
                                   ON UPDATE CURRENT_TIMESTAMP,
@@ -257,9 +257,9 @@ CREATE TABLE installment_payments (
   installment_id BIGINT UNSIGNED NOT NULL,
   amount         DECIMAL(10,2)   NOT NULL,
   payment_method ENUM(
-                   'cash',
-                   'transfer',
-                   'card'
+                   'CASH',
+                   'TRANSFER',
+                   'CARD'
                  )               NOT NULL,
   note           TEXT,
   created_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -293,7 +293,7 @@ BEGIN
   SET
     amount_paid    = amount_paid + NEW.amount,
     pending_amount = total - (amount_paid + NEW.amount),
-    status         = IF((total - (amount_paid + NEW.amount)) <= 0, 'completed', status)
+    status         = IF((total - (amount_paid + NEW.amount)) <= 0, 'COMPLETED', status)
   WHERE id = NEW.repair_order_id;
 END$$
 
@@ -306,7 +306,7 @@ BEGIN
   SET
     amount_paid    = amount_paid + NEW.amount,
     pending_amount = total_amount - (amount_paid + NEW.amount),
-    status         = IF((total_amount - (amount_paid + NEW.amount)) <= 0, 'completed', status)
+    status         = IF((total_amount - (amount_paid + NEW.amount)) <= 0, 'COMPLETED', status)
   WHERE id = NEW.installment_id;
 END$$
 
@@ -351,8 +351,8 @@ begin
     --  roles  (2 rows)
     -- ---------------------------------------------------------
     INSERT INTO roles (id, role_name) VALUES
-        (1, 'admin'),
-        (2, 'superadmin');
+        (1, 'ADMIN'),
+        (2, 'SUPERADMIN');
 
     -- ---------------------------------------------------------
     --  users  (3 rows)
@@ -377,12 +377,12 @@ begin
     --  services  (6 rows — covers every category)
     -- ---------------------------------------------------------
     INSERT INTO services (id, name, category, price, active, created_at) VALUES
-        (1, 'Full Reel Overhaul',        'reel_repair',   350.00, 1, '2026-01-01 00:00:00'),
-        (2, 'Reel Bearing Replacement',  'reel_repair',   180.00, 1, '2026-01-01 00:00:00'),
-        (3, 'Rod Tip Repair',            'rod_repair',    250.00, 1, '2026-01-01 00:00:00'),
-        (4, 'Rod Guide Wrap',            'rod_repair',    420.00, 1, '2026-01-01 00:00:00'),
-        (5, 'General Cleaning & Lube',   'maintenance',   120.00, 1, '2026-01-01 00:00:00'),
-        (6, 'Custom Handle Grip',        'other',         300.00, 0, '2026-01-01 00:00:00');
+        (1, 'Full Reel Overhaul',        'REEL_REPAIR',   350.00, 1, '2026-01-01 00:00:00'),
+        (2, 'Reel Bearing Replacement',  'REEL_REPAIR',   180.00, 1, '2026-01-01 00:00:00'),
+        (3, 'Rod Tip Repair',            'ROD_REPAIR',    250.00, 1, '2026-01-01 00:00:00'),
+        (4, 'Rod Guide Wrap',            'ROD_REPAIR',    420.00, 1, '2026-01-01 00:00:00'),
+        (5, 'General Cleaning & Lube',   'MAINTENANCE',   120.00, 1, '2026-01-01 00:00:00'),
+        (6, 'Custom Handle Grip',        'OTHER',         300.00, 0, '2026-01-01 00:00:00');
 
     -- ---------------------------------------------------------
     --  repair_orders  (4 rows — one per status)
@@ -391,13 +391,13 @@ begin
     -- ---------------------------------------------------------
     INSERT INTO repair_orders (id, client_id, created_by, status, comment, total, amount_paid, pending_amount, created_at, updated_at) VALUES
         -- Order 1: pending — no payments yet
-        (1, 1, 1, 'pending',     'Customer will drop off reel tomorrow',     530.00,   0.00, 530.00, '2026-04-01 09:00:00', '2026-04-01 09:00:00'),
+        (1, 1, 1, 'PENDING',     'Customer will drop off reel tomorrow',     530.00,   0.00, 530.00, '2026-04-01 09:00:00', '2026-04-01 09:00:00'),
         -- Order 2: in_progress — partial payment
-        (2, 2, 2, 'in_progress', 'Rod shipped from Cancun, awaiting parts',  670.00, 250.00, 420.00, '2026-04-05 11:30:00', '2026-04-06 14:00:00'),
+        (2, 2, 2, 'IN_PROGRESS', 'Rod shipped from Cancun, awaiting parts',  670.00, 250.00, 420.00, '2026-04-05 11:30:00', '2026-04-06 14:00:00'),
         -- Order 3: ready — fully paid, awaiting pickup
-        (3, 3, 2, 'ready',       'Client notified via WhatsApp',             120.00, 120.00,   0.00, '2026-04-10 08:00:00', '2026-04-12 17:00:00'),
+        (3, 3, 2, 'READY',       'Client notified via WhatsApp',             120.00, 120.00,   0.00, '2026-04-10 08:00:00', '2026-04-12 17:00:00'),
         -- Order 4: completed — fully paid and delivered
-        (4, 5, 1, 'completed',   'Bulk job, 2 reels + cleaning',             700.00, 700.00,   0.00, '2026-03-20 10:00:00', '2026-03-28 16:00:00');
+        (4, 5, 1, 'COMPLETED',   'Bulk job, 2 reels + cleaning',             700.00, 700.00,   0.00, '2026-03-20 10:00:00', '2026-03-28 16:00:00');
 
     -- ---------------------------------------------------------
     --  repair_order_items  (7 rows)
@@ -419,36 +419,36 @@ begin
     -- ---------------------------------------------------------
     INSERT INTO repair_order_payments (id, repair_order_id, amount, payment_method, note, created_at) VALUES
         -- Order 2: partial payment of 250
-        (1, 2, 250.00, 'transfer', 'Bank transfer — down payment',          '2026-04-06 14:00:00'),
+        (1, 2, 250.00, 'TRANSFER', 'Bank transfer — down payment',          '2026-04-06 14:00:00'),
         -- Order 3: single full payment
-        (2, 3, 120.00, 'cash',     'Paid in full at pickup',                '2026-04-12 17:00:00'),
+        (2, 3, 120.00, 'CASH',     'Paid in full at pickup',                '2026-04-12 17:00:00'),
         -- Order 4: two payments totalling 700
-        (3, 4, 400.00, 'card',     'First payment via terminal',            '2026-03-22 10:00:00'),
-        (4, 4, 300.00, 'cash',     'Balance paid at delivery',              '2026-03-28 16:00:00');
+        (3, 4, 400.00, 'CARD',     'First payment via terminal',            '2026-03-22 10:00:00'),
+        (4, 4, 300.00, 'CASH',     'Balance paid at delivery',              '2026-03-28 16:00:00');
 
     -- ---------------------------------------------------------
     --  installments  (3 rows)
     -- ---------------------------------------------------------
     INSERT INTO installments (id, client_id, created_by, article, comment, interest_rate, total_amount, amount_paid, pending_amount, status, created_at, updated_at) VALUES
         -- Active plan, partially paid
-        (1, 4, 1, 'Shimano Stella SW 8000',     'Layaway — 4 monthly payments',    5.00, 12600.00, 3200.00, 9400.00, 'active',    '2026-03-15 11:00:00', '2026-04-15 11:00:00'),
+        (1, 4, 1, 'Shimano Stella SW 8000',     'Layaway — 4 monthly payments',    5.00, 12600.00, 3200.00, 9400.00, 'ACTIVE',    '2026-03-15 11:00:00', '2026-04-15 11:00:00'),
         -- Completed plan, fully paid
-        (2, 1, 2, 'Daiwa Saltiga 5000',          NULL,                              0.00,  8500.00, 8500.00,    0.00, 'completed', '2026-01-20 14:00:00', '2026-03-20 14:00:00'),
+        (2, 1, 2, 'Daiwa Saltiga 5000',          NULL,                              0.00,  8500.00, 8500.00,    0.00, 'COMPLETED', '2026-01-20 14:00:00', '2026-03-20 14:00:00'),
         -- Active plan, first payment only
-        (3, 5, 1, 'Penn International 50VISW',   'Commercial client — net 60 terms', 3.50, 15450.00, 5000.00, 10450.00, 'active', '2026-04-01 09:00:00', '2026-04-01 09:00:00');
+        (3, 5, 1, 'Penn International 50VISW',   'Commercial client — net 60 terms', 3.50, 15450.00, 5000.00, 10450.00, 'ACTIVE', '2026-04-01 09:00:00', '2026-04-01 09:00:00');
 
     -- ---------------------------------------------------------
     --  installment_payments  (5 rows)
     -- ---------------------------------------------------------
     INSERT INTO installment_payments (id, installment_id, amount, payment_method, note, created_at) VALUES
         -- Installment 1: two payments = 3200
-        (1, 1, 1600.00, 'transfer', 'March payment',                        '2026-03-15 11:00:00'),
-        (2, 1, 1600.00, 'transfer', 'April payment',                        '2026-04-15 11:00:00'),
+        (1, 1, 1600.00, 'TRANSFER', 'March payment',                        '2026-03-15 11:00:00'),
+        (2, 1, 1600.00, 'TRANSFER', 'April payment',                        '2026-04-15 11:00:00'),
         -- Installment 2: two payments = 8500  (completed)
-        (3, 2, 4250.00, 'cash',     'First half',                           '2026-02-20 14:00:00'),
-        (4, 2, 4250.00, 'card',     'Final payment — plan completed',       '2026-03-20 14:00:00'),
+        (3, 2, 4250.00, 'CASH',     'First half',                           '2026-02-20 14:00:00'),
+        (4, 2, 4250.00, 'CARD',     'Final payment — plan completed',       '2026-03-20 14:00:00'),
         -- Installment 3: one payment = 5000
-        (5, 3, 5000.00, 'transfer', 'Initial deposit',                      '2026-04-01 09:00:00');
+        (5, 3, 5000.00, 'TRANSFER', 'Initial deposit',                      '2026-04-01 09:00:00');
 
 end //
 DELIMITER ;

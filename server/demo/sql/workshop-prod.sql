@@ -12,7 +12,7 @@ USE workshop_db;
 
 -- -------------------------------------------------------------
 --  1. roles
---     Stores the two system roles: admin and superadmin.
+--     Stores the two system roles: ADMIN and SUPERADMIN.
 -- -------------------------------------------------------------
 CREATE TABLE roles (
   id        BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -23,10 +23,10 @@ CREATE TABLE roles (
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci
-  COMMENT='System roles: admin, superadmin';
+  COMMENT='System roles: ADMIN, SUPERADMIN';
 
 -- Seed default roles
-INSERT INTO roles (role_name) VALUES ('admin'), ('superadmin');
+INSERT INTO roles (role_name) VALUES ('ADMIN'), ('SUPERADMIN');
 
 
 -- -------------------------------------------------------------

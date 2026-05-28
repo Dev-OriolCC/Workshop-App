@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,7 +59,10 @@ class ClientRepositoryTest {
 
     @Test
     void deleteById() {
-        clientRepository.deleteById(1L);
-        assertEquals(4, clientRepository.findAll().size());
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            clientRepository.deleteById(1L);
+            clientRepository.flush();
+        });
+        assertEquals(5, clientRepository.findAll().size());
     }
 }

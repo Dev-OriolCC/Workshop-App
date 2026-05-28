@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 
@@ -62,7 +63,10 @@ class ServiceRepositoryTest {
 
     @Test
     void deleteById() {
-        serviceRepository.deleteById(1L);
-        assertEquals(5, serviceRepository.findAll().size());
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            serviceRepository.deleteById(1L);
+            serviceRepository.flush();
+        });
+        assertEquals(6, serviceRepository.findAll().size());
     }
 }

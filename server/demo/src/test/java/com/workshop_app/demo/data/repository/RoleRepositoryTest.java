@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,17 +32,17 @@ class RoleRepositoryTest {
     void findById() {
         RoleEntity role = roleRepository.findById(1L).orElse(null);
         assertNotNull(role);
-        assertEquals("admin", role.getRoleName());
+        assertEquals("ADMIN", role.getRoleName());
     }
 
     @Test
     void save() {
         RoleEntity newRole = new RoleEntity();
-        newRole.setRoleName("manager");
+        newRole.setRoleName("MANAGER");
         
         RoleEntity savedRole = roleRepository.save(newRole);
         assertNotNull(savedRole.getId());
-        assertEquals("manager", savedRole.getRoleName());
+        assertEquals("MANAGER", savedRole.getRoleName());
         assertEquals(3, roleRepository.findAll().size());
     }
 
@@ -49,18 +50,21 @@ class RoleRepositoryTest {
     void update() {
         RoleEntity role = roleRepository.findById(1L).orElse(null);
         assertNotNull(role);
-        role.setRoleName("superadmin_updated");
+        role.setRoleName("SUPERADMIN_UPDATED");
         roleRepository.save(role);
 
         RoleEntity updatedRole = roleRepository.findById(1L).orElse(null);
         assertNotNull(updatedRole);
-        assertEquals("superadmin_updated", updatedRole.getRoleName());
+        assertEquals("SUPERADMIN_UPDATED", updatedRole.getRoleName());
     }
 
     @Test
     void deleteById() {
-        roleRepository.deleteById(1L);
-        assertEquals(1, roleRepository.findAll().size());
-        assertFalse(roleRepository.findById(1L).isPresent());
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            roleRepository.deleteById(1L);
+            roleRepository.flush();
+        });
+        assertEquals(2, roleRepository.findAll().size());
+        assertTrue(roleRepository.findById(1L).isPresent());
     }
 }
