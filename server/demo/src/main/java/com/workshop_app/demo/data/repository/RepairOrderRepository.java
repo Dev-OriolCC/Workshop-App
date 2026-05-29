@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RepairOrderRepository extends JpaRepository<RepairOrderEntity, Long> {
+
+    boolean existsByCreatedBy_Id(Long userId);
+
+    boolean existsByClient_Id(Long clientId);
 }
