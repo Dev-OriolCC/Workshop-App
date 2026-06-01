@@ -94,3 +94,8 @@ server/demo/!**/src/test/**/build/
 
 ### VS Code ###
 server/demo/.vscode/
+
+## Context Backend
+server/demo/context/*.md
+server/demo/context/feature-specs/*.md
+server/demo/context/**
